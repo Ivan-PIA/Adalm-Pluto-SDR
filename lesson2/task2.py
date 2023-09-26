@@ -4,9 +4,6 @@ import matplotlib.pyplot as plt
 import time
 
 
-
-
-
 #a = np.random.randint(1,50000)
 #b = np.random.randint(1,50000)
 data_time = []
