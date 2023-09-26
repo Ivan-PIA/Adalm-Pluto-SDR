@@ -1,4 +1,4 @@
-# Adalm-Pluto-SDR
+# LESSON_2
 
 ## Задание №1 Сравнение скорости работы lists и NumPy
 
