@@ -24,7 +24,6 @@ for r in range(30):
     for i in range(len(rx.imag)):
        s+=rx.imag[i] 
     sred=s/len(rx.imag)  
-    
     if rx.imag[r]>sred:
         time.sleep(2)
     print(sred)
