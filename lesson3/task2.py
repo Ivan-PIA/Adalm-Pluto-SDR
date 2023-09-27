@@ -1,5 +1,4 @@
 import time
-
 import adi
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,7 +13,7 @@ s=0
 for r in range(30):
     rx = sdr.rx()
     plt.clf()
-    plt.plot(rx.real)
+    plt.plot(rx.real) # 
     plt.plot(rx.imag)
     plt.draw()
     plt.xlabel('time')
