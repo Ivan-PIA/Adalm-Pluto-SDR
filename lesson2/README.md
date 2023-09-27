@@ -1,5 +1,3 @@
-https://humble-ballcap-e09.notion.site/SDR-club-f287720eb5e14e49aa593d183268906b
-
 # LESSON_2
 
 ## Задание №1 Сравнение скорости работы lists и NumPy
@@ -17,6 +15,7 @@ https://humble-ballcap-e09.notion.site/SDR-club-f287720eb5e14e49aa593d183268906b
 ## Задание №2 Создание графиков с различным стилем отображения
 
 
+
 ![](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/lesson2/photo/2023-09-26_22-33-20.png)
 
-# LESSON_2
+
