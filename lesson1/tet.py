@@ -12,7 +12,7 @@ c = []
 t=0
 
 for i in range(1000):
-    
+   
     c.append(A*math.cos(f*t+p))
     a.append(A*math.sin(f*t+p))
     t+=0.1
