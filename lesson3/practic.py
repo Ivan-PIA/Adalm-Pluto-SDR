@@ -4,9 +4,13 @@ from scipy import signal
 from scipy.signal import kaiserord, lfilter, firwin, freqz
 from scipy import fftpack
  
-Ts1=0.5e-3
+Ts1 = 1e-3
+Fs1 = 1/Ts1
+norm_freq = 0.4*np.pi
+frec = (norm_freq*Fs1)/(2*np.pi)
+print(frec)
 t = np.arange(-20, 41)*Ts1
-s =  np.cos(100*t*(2*np.pi))
+s =  np.cos(frec*t*(2*np.pi))
 
 
 plt.figure(1)
@@ -18,7 +22,7 @@ plt.stem(t, s )
 
 Ts2=2e-3
 fs2=1/Ts2
-t = np.arange(-5, 11)*Ts2
+t = np.arange(-5, 195)*Ts2
 s =  np.cos(100*t*(2*np.pi))
 plt.subplot(3,1,3)
 plt.stem(t, s )
