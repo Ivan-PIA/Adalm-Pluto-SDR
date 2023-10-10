@@ -20,9 +20,11 @@ N=256 # количество точек ДПФ
 X=fft(x,N)/N
 
 k2 = np.arange(-N/2, N/2)
+df=fs/N
 kf2=k2*df
 X2 = fftshift(X) # сдвиг ДПФ на центр
 plt.figure(4)
 plt.stem(kf2,abs(X2))
 plt.xlabel('Гц' )
 plt.ylabel( '$x [ k ] $' )
+plt.show()
