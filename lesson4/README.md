@@ -8,9 +8,9 @@
 Сравните дискретные отсчеты первого и второго сигналов.(task1.1.py)
 
 
-<img src="lesson4\photo\2023-10-10_23-29-06.png">
+<img src="photo\2023-10-10_23-29-06.png">
 
-<img src="lesson4\photo\2023-10-10_23-29-24.png">
+<img src="photo\2023-10-10_23-29-24.png">
 
 По графикам видно, что дискретные отсчеты первого и второго сигналов одинаковы, так как одинаковы и нормированные частоты
 
@@ -44,7 +44,7 @@ k=16
 5. Задайте сигнал в виде суммы двух колебаний. Вычислите ДПФ сигнала.
 
 
-<img src="lesson4\photo\2023-10-10_23-56-52.png">
+<img src="photo\2023-10-10_23-56-52.png">
 
 
 6. Вычислите *ОДПФ* сигнала, заданого в частотной области в виде `X=np.array([0,0,1,0,0,0,0,0])`.
@@ -55,19 +55,19 @@ k=16
 
 `X=np.array([0,0,1,0,0,0,0,0])`
 
-<img src="lesson4\photo\array001000.png">
+<img src="photo\array001000.png">
 
 
 `X=np.array([0,0,1j,0,0,0,0,0])`
 
-<img src="lesson4\photo\arr01j.png">
+<img src="photo\arr01j.png">
 
 
 `X=np.array([0,0,2-1j,0,0,0,0,0])`
 
-<img src="lesson4\photo\arr02j.png">
+<img src="photo\arr02j.png">
 
 
 `X=np.array([0,0,2-1j,0,0,0,0,1])`
 
-<img src="lesson4\photo\newarr2j+last1.png">
+<img src="photo\newarr2j+last1.png">
