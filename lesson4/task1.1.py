@@ -16,24 +16,35 @@ x1=np.cos(2*np.pi*fc1*t1)
 
 plt.figure(1)
 plt.subplot(2,1,1)
-plt.plot(t,x) 
+plt.plot(t,x)
 plt.subplot(2,1,2)
+plt.xlabel('$t=nT_s$')
+plt.ylabel('$x[n]$') 
+N=256 # количество точек ДПФ
+X = fft(x,N)/N # вычисление ДПФ и нормирование на N
+
+k = np.arange(0, N)
+plt.stem(k,abs(X)) # выводим модуль ДПФ 
+
+plt.figure(2)
+plt.subplot(2,1,1)
 plt.plot(t1,x1)
+
+plt.subplot(2,1,2)
+plt.xlabel('$t=nT_s$')
+plt.ylabel('$x[n]$') 
+N=256 # количество точек ДПФ
+X = fft(x1,N)/N # вычисление ДПФ и нормирование на N
+
+
+plt.stem(k,abs(X)) # выводим модуль ДПФ 
 plt.show()
-# plt.subplot(2,1,2)
-# plt.stem(t,x) # для отображения временных отсчетов сигнала, выбрать длительность 0.2 сек
 
 
 
-# plt.xlabel('$t=nT_s$')
-# plt.ylabel('$x[n]$') 
-# N=256 # количество точек ДПФ
-# X = fft(x,N)/N # вычисление ДПФ и нормирование на N
-# plt.figure(2)
-# k = np.arange(0, N)
-# plt.stem(k,abs(X)) # выводим модуль ДПФ 
 
-# k2 = np.arange(-N/2, N/2)
-# X2 = fftshift(X) # сдвиг ДПФ на центр 
-# plt.figure(3)
-# plt.stem(k2,abs(X2))
+#k2 = np.arange(-N/2, N/2)
+#X2 = fftshift(X) # сдвиг ДПФ на центр 
+#plt.figure(3)
+#plt.stem(k2,abs(X2))
+#plt.show()
