@@ -88,4 +88,5 @@ plt.stem(kf[0:100]  ,abs(Xdd[0:100] ))
 plt.title('Спектр сигнала на выходе ФНЧ детектора ')
 plt.xlabel('f')
 plt.ylabel('$m(f)$') 
+plt.show()
 
