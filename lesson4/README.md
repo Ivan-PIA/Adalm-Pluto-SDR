@@ -61,3 +61,12 @@ k=16
 `X=np.array([0,0,2-1j,0,0,0,0,1])`
 
 <img src="photo\newarr2j+last1.png">
+
+
+### Работа с SDR
+
+Требовалось вывести спектр частот 
+
+<img src="photo\photo_2023-10-05_09-30-24.jpg">
+
+<img src="photo\photo_2023-10-05_09-30-26.jpg">
