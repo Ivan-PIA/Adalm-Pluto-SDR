@@ -8,8 +8,8 @@ import numpy as np
 sdr = adi.Pluto("ip:192.168.3.1")
 
 
-sdr.rx_lo = 2000000000
-sdr.tx_lo = 2000000000
+sdr.rx_lo = int(2000e6 + 2e6 * 3)
+sdr.tx_lo = int(2000e6 + 2e6 * 3)
 sdr.sample_rate = 1e6
 sdr.rx_buffer_size = 1000
 
