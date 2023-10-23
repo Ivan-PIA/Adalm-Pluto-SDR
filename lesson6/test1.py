@@ -26,8 +26,8 @@ def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):             
 
 
 t = text_to_bits("q")
-str_modul = '1111111111'
-t=str_modul+t+'1'
+str_modul = '1'*10
+t=str_modul+t
 
 print(t)
 ampl = 2**14
@@ -48,30 +48,39 @@ def AM():                    # функция амплитудной модул�
             data = np.concatenate([data,bit_1])
     return data
 
+
+
+def sample_to_bit(str_after,d):          # функция для дешифрирования сигнала (не доработана)
+    for i in range(100):
+        if d[i]>2800.0:
+            str_after = str_after + '1'
+        elif d[i]>1450.0 and d[i]<1900.0:
+            str_after = str_after + '0'
+    return str_after
+
+
 data = AM() # данные для передачи
 
-#plt.plot(data)
 
-d = []
 
-for r in range(100):                #цикл для передачи данных и их принятие
-    if (r==10 or r ==40 or r==80): # в какое время передавать данные
-        sdr.tx(data)
-    rx = sdr.rx()
-    d = np.concatenate([d,abs(rx)]) # слияние массивов
+
+def send_masseg():
+    d = []
+    for r in range(100):                #цикл для передачи данных и их принятие
+        if (r==10 or r ==40 or r==80): # в какое время передавать данные
+            sdr.tx(data)
+        rx = sdr.rx()
+        d = np.concatenate([d,abs(rx)]) # слияние массивов
+    return d
+
 str_after = '0000'
-print(d)
+sampl_bit = sample_to_bit(str_after,send_masseg()) 
+#print(d)
 
 
-for i in range(100):
-    if d[i]>2800.0:
-        str_after = str_after + '1'
-    elif d[i]>1450.0 and d[i]<1900.0:
-        str_after = str_after + '0'
-
-print(type(d[1]))
+#print(type(d[1]))
 print(str_after)
 plt.xlabel('sample')
 plt.ylabel('ampl')
-plt.plot(d)
+plt.plot(send_masseg())
 plt.show()    
