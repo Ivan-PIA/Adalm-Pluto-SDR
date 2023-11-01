@@ -25,16 +25,16 @@ def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):             
 
 
 
-t = text_to_bits("q")
+t = text_to_bits('q')
 str_modul = '1'*10
 t=str_modul+t
 
 print(t)
 ampl = 2**14
-bit_1 = np.array([ampl+1j*ampl]*100)
+
 c = np.array([0]*1000)
 #f = np.concatenate([k,c])
-
+bit_1 = np.array([ampl+1j*ampl]*100)
 bit_0 = np.array([ampl/10+ampl*1j/10]*100)
 
 
@@ -74,13 +74,15 @@ def send_masseg():
     return d
 
 str_after = '0000'
-sampl_bit = sample_to_bit(str_after,send_masseg()) 
+rx_signal = send_masseg()
+#sampl_bit = sample_to_bit(str_after,rx_signal) 
 #print(d)
 
 
+
 #print(type(d[1]))
-print(str_after)
+#print(str_after)
 plt.xlabel('sample')
 plt.ylabel('ampl')
-plt.plot(send_masseg())
+plt.plot(rx_signal)
 plt.show()    

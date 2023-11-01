@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-sdr = adi.Pluto("ip:192.168.2.1")
+sdr = adi.Pluto("ip:192.168.3.1")
 
 
 sdr.rx_lo = 2417000000

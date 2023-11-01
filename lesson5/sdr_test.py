@@ -16,12 +16,12 @@ sdr.sample_rate=1e6
 
 
 N=1024
-fc=10000
+fc=4
 
-k=np.arange(0,fc)
+k=np.arange(0,1,0.0001)
 k = k / fc
 
-s = np.sin(2*np.pi*fc*k) * 2**14 + 1j * np.cos(2*np.pi*fc*k) * 2**14 
+s = np.sin(2*np.pi*fc*k) 
 print(s)
 plt.figure(1)
 plt.plot(s)
