@@ -4,6 +4,7 @@
 ### Lecture
 
 <details>
+
 1. Косинус
 
 <img src="photo/cos.png"> 
