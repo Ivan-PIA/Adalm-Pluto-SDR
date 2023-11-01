@@ -56,6 +56,7 @@
 i = np.cos(2 * np.pi * t * fc) * 2 ** 14
 q = np.sin(2 * np.pi * t * fc) * 2 ** 14
 ```
+<img src="photo/Figure_1.png">
 
 - Подаем на передатчик
 
