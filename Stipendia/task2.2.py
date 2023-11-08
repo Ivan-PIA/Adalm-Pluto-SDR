@@ -4,8 +4,8 @@ from scipy.fftpack import fft, ifft,  fftshift, ifftshift
 from scipy import signal
 from scipy.signal import kaiserord, lfilter, firwin, freqz
 
-A =1
-f1=10
+A = 1
+f1= 10
 f2 =20
 fs=200
 T = 1/fs
@@ -14,8 +14,8 @@ t = np.linspace(0, (N-1)*T, N)
 x = A * np.cos(2 * np.pi * f1 * t) + A * np.cos(2 * np.pi * f2 * t)
 
 
-X = np.fft.fft(x)
-freq = np.fft.fftfreq(N, d=T)
+X = np.fft.fft(x) # бпф
+freq = np.fft.fftfreq(N, d=T)#для получения частотной шкалы
 
 n=N
 fn =  f2/fs             # нормированная частота
@@ -37,14 +37,14 @@ plt.title('Спектр сигнала на выходе ФНЧ')
 plt.xlabel('f, Hz')
 plt.ylabel('m(f)')
 
-plt.figure(3)
+plt.figure(3)            #спектр ДПФ
 plt.stem(freq,np.abs(X))
 plt.title('спектр ДПФ')
 plt.xlabel('f, Hz')
 plt.ylabel('m(f)')
 
 
-plt.figure(4)
+plt.figure(4)             #Сигнал из двух составляющих
 plt.plot(t,x)
 plt.title('Сигнал из двух составляющих')
 plt.xlabel('t, s')
