@@ -11,16 +11,16 @@ from scipy.fftpack import fft, ifft,  fftshift, ifftshift
 fm = int(1200e6)
 sdr = adi.Pluto("ip:192.168.2.1")
 sdr.sample_rate = 1e6
-sdr.rx_buffer_size = 1000
+
 sdr.rx_lo = fm
 sdr.tx_lo = fm
 
 sdr.rx_buffer_size = 100000
 sdr.tx_cyclic_buffer = False
 
-# 50 bit
-def gen_QPSK():
-    Ns= 30
+
+def gen_QPSK():          # Генерация QPSK сигнала  
+    Ns= 30 # кол-во семплов на бит
    
 
     num_symbols = 50
@@ -61,13 +61,13 @@ def gen_QPSK():
     return samples
 
 
-def Txer(data):
+def Txer(data): # Отправка данных
     while 1:
         sdr.tx(data)
         sdr.tx_destroy_buffer()
         print(1)
 
-def listen_efir(data):
+def listen_efir(data):   # Прием данных в реальном времени
    
     for r in range(50):
         sdr.tx(data)
