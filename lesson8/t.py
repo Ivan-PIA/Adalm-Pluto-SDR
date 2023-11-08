@@ -29,35 +29,37 @@ def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):             
 word = 'andrey'
 
 
-bits = text_to_bits(word)
-
+bits = text_to_bits(word)+"1"
+text = text_from_bits(bits)
+print(bits)
+print(text)
 bit_num_samples = 20
 
 
-bit_1 = [2**14 + 1j * 2**14 for i in range(0,bit_num_samples)]
-bit_0 = [1 +1j * 1 for i in range(0,bit_num_samples)]
-print(bit_0)
+# bit_1 = [2**14 + 1j * 2**14 for i in range(0,bit_num_samples)]
+# bit_0 = [1 +1j * 1 for i in range(0,bit_num_samples)]
+# print(bit_0)
 
-def AM():                    
-    data = []
+# def AM():                    
+#     data = []
    
-    for i in range(len(bits)):
+#     for i in range(len(bits)):
         
-        if bits[i]=='0':
+#         if bits[i]=='0':
            
-            data+=bit_0
-        elif bits[i]=='1':
+#             data+=bit_0
+#         elif bits[i]=='1':
             
-            data+=bit_1
-    return data
+#             data+=bit_1
+#     return data
 
 
-sample = AM()
-plt.plot(sample)
-print(sample)
+# sample = AM()
+# plt.plot(sample)
+# print(sample)
 
-while(1):
-    print(1)
-    sdr.tx(sample)
-    time.sleep(2)
-    sdr.tx_destroy_buffer()
+# while(1):
+#     print(1)
+#     sdr.tx(sample)
+#     time.sleep(2)
+#     sdr.tx_destroy_buffer()
