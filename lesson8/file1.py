@@ -32,7 +32,7 @@ data += [1 + 1j*1 for i in range(0, 700)]
 
 
 data1 = np.array([])
-len_sample = 30
+len_sample = 20
 
 ampl_bit_1 = apl + 1j * apl
 ampl_bit_0 = (apl/4) + (apl/4) * 1j
@@ -42,7 +42,7 @@ sample_bit_1 = [ampl_bit_1 for i in range(0, len_sample)]
 sample_bit_0 = [ampl_bit_0 for i in range(0, len_sample)]
 
 
-dist = 30
+dist = 200
 
 
 
@@ -124,7 +124,7 @@ def ListenData(e):
     
 
 if(1):
-    string = 'verstended'
+    string = 'verstendet'
 
 
 
@@ -146,13 +146,15 @@ if(CON == 1):
 elif(CON == 2):
     
     string_bit = char_to_bit(string)
+    #print(string_bit)
+    string_bit = "111111111" + string_bit + "111111111"
     print(f"{string} = {string_bit} ")
-    string_bit = '11111111111111111111111111111111111111111111111111111111111111111111111111'
+    
     data = bit_to_sample(string_bit)
     plt.plot(data)
     
     while(True):
-        print(1)
+        #print(1)
         sdr.tx(data)
     
 
