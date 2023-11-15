@@ -11,23 +11,25 @@ from scipy.fftpack import fft, ifft,  fftshift, ifftshift
 fm = int(1200e6)
 sdr = adi.Pluto("ip:192.168.2.1")
 sdr.sample_rate = 1e6
-
+sdr.rx_buffer_size = 1000
 sdr.rx_lo = fm
 sdr.tx_lo = fm
 
 sdr.rx_buffer_size = 100000
 sdr.tx_cyclic_buffer = False
 
-
-def gen_QPSK():          # Генерация QPSK сигнала  
-    Ns= 30 # кол-во семплов на бит
+# 50 bit
+def gen_QPSK():
+    Ns= 30
    
 
     num_symbols = 50
     x_int = np.random.randint(0, 4, num_symbols) 
-    #sihro_1 = np.array([1]*10)
-    #x_int = np.append(x_int, [1]*10)
-    #x_int = np.insert(x_int,0,[1]*10)
+    rand_bit = np.random.choice(2,50)
+    
+    rand_bit = np.insert(rand_bit,0,[1]*10)
+    print("rand _bit",rand_bit)
+
     bit = ''
     for i in range(len(x_int)):
         if x_int[i]==0:
@@ -38,9 +40,8 @@ def gen_QPSK():          # Генерация QPSK сигнала
             bit+='10' 
         if x_int[i]==3:
             bit+='11'
-    print(x_int)
-    print(bit)
-
+    
+    pr_bit = join(rand_bit)
     x_degrees = x_int*360/4.0 + 135 
     x_radians = x_degrees*np.pi/180.0 # sin() и cos() в рад.
     x_symbols = np.cos(x_radians) + 1j*np.sin(x_radians) 
@@ -61,13 +62,20 @@ def gen_QPSK():          # Генерация QPSK сигнала
     return samples
 
 
-def Txer(data): # Отправка данных
+def Txer(data):
     while 1:
         sdr.tx(data)
         sdr.tx_destroy_buffer()
         print(1)
 
-def listen_efir(data):   # Прием данных в реальном времени
+
+def get_rx():
+    rx_data = sdr.rx()
+
+    pass
+
+
+def listen_efir(data):
    
     for r in range(50):
         sdr.tx(data)
@@ -82,7 +90,6 @@ def listen_efir(data):   # Прием данных в реальном врем�
         time.sleep(0.1)
         
 #Txer(gen_QPSK())
-listen_efir(gen_QPSK())
+#listen_efir(gen_QPSK())
+gen_QPSK()
 plt.show()
-
-
