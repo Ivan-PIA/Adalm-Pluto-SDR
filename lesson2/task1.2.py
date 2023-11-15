@@ -7,9 +7,9 @@ import time
 
 def time_sort_numpy(n):
     a = np.random.sample(n)
-    start = time.time()
+    start = time.time() # замечаем время перед сортировкой
     np.sort(a)
-    end = time.time() - start
+    end = time.time() - start # замечаем время после сортировки и вычитаем стартовое чтобы понять сколько длилась сортировка
 
     return end
 
@@ -28,7 +28,7 @@ time_numpy = []
 count_el = []
 
 
-for i in range(10,5000000,800000):
+for i in range(10,5000000,800000):# заполняем массивы для создания графика
     time_list.append(time_sort_list(i))
     time_numpy.append(time_sort_numpy(i))
     count_el.append(i)

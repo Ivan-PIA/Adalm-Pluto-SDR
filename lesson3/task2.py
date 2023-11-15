@@ -1,30 +1,33 @@
-import time
-import adi
-import matplotlib.pyplot as plt
-import numpy as np
+import time                     # для измененя частоты смены кадров 
+import adi                      # для работы с Adalm-Pluto
+import matplotlib.pyplot as plt # для отрисовки графика
+import numpy as np              # для выделения реальной и мнимой части
 
+# Подключаемся к SDR
+sdr = adi.Pluto("ip:192.168.2.1") 
 
-sdr = adi.Pluto("ip:192.168.2.1")
-
-
+# Устанавливаем значение несущей частоты в соответствии с каналом
 sdr.rx_lo = 2417000000
 
-s=0
-for r in range(30):
-    rx = sdr.rx()
-    plt.clf()
-    plt.plot(rx.real) # 
-    plt.plot(rx.imag)
-    plt.draw()
+#Сбор данных и отрисовка графиков
+
+for r in range(30):     #кол-во кадров с графиками
+    rx = sdr.rx()       # принятые данные помещаем в rx
+    plt.clf()           # на каждой итерации очищение старого графика
+    plt.plot(rx.real)   # отрисовываем реальную часть
+    plt.plot(rx.imag)   # отрисовываем мнимую часть
+    plt.draw()          # пересовываем фигуру
     plt.xlabel('time')
     plt.ylabel('ampl')
-    plt.pause(0.05)
-    time.sleep(0.1)
-    for i in range(len(rx.imag)):
-       s+=rx.imag[i] 
-    sred=s/len(rx.imag)  
-    if rx.imag[r]>sred:
-        time.sleep(2)
-    print(sred)
+    plt.pause(0.05)     # небольшая пауза перед отрисовкой, чтобы успеть обработать данные
+    time.sleep(0.1)     # время смены кадра 
+    
+    # усреднение шума и сигнала p.s. требуется подтверждение преподавателя легально ли?
+    for i in range(len(rx.imag)):  
+       s+=rx.imag[i]               # сумма мнимых значений
+    sred=s/len(rx.imag)            # считаем среднюю 
+    if rx.imag[r]>sred:            # сравнимаем среднее значение со всеми мнимыми элементами  
+        time.sleep(2)              # получаем задержку где колебания усреднены и не выше средней
+    #print(sred)
 
-plt.show()
+plt.show()# #выводим график

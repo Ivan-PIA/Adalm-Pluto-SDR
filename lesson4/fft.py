@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-fc=1000 # Частота косинуса 
+fc=100 # Частота косинуса 
 fs=32*fc # частота дискретизации, избыточная 
 t=np.arange( 0, 2,  1/fs) # длительность сигнала 2 с
 x=np.cos(2*np.pi*fc*t) # формирование временного сигнала
@@ -24,7 +24,8 @@ df=fs/N
 kf2=k2*df
 X2 = fftshift(X) # сдвиг ДПФ на центр
 plt.figure(4)
-plt.stem(kf2,abs(X2))
+plt.stem(kf2,abs(X))
 plt.xlabel('Гц' )
 plt.ylabel( '$x [ k ] $' )
+
 plt.show()

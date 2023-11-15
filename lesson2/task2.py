@@ -9,7 +9,7 @@ n = 40
 # time vector
 t = np.linspace(0, 1, n)
 # sine wave
-x = np.sin(np.pi*t) + np.sin(2*np.pi*t) + np.sin(3*np.pi*t) + np.sin(5*np.pi*t)+1
+x = np.sin(np.pi*t) + np.sin(2*np.pi*t) + np.sin(3*np.pi*t) + np.sin(5*np.pi*t)+1 # генерация сигнала
 
 fig = plt.figure(figsize=(16, 8), dpi=100)
 
