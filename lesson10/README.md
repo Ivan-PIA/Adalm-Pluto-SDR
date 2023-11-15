@@ -21,3 +21,22 @@ b = np.correlate(a,a,'full')
 ```
 <img src = "photo/Figure_1.png">
 
+
+
+2. Сформированный модулированный сигнал
+
+
+<img src = "photo/tx1.png">
+
+
+3. Принятый сигнал ASK
+
+<img src = "photo/csv.png">
+
+
+- Принятые данные записали в файл для дальнейшей обработки
+
+
+```py
+np.savetxt (" my_data.csv", rx_data, delimiter=" , ")
+```
