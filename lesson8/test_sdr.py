@@ -47,6 +47,7 @@ def AM():
             data= np.concatenate(data,bit_1)
     return data
 
+
 plt.plot(AM())
 
 

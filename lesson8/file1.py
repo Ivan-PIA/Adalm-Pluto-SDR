@@ -48,12 +48,6 @@ sample_bit_0 = [ampl_bit_0 for i in range(0, len_sample)]
 
 dist = 200
 
-<<<<<<< HEAD
-=======
-ampl_bit_1 = 700# + 600j
-ampl_bit_0 = 300# + 200j
-len_msg_sinhr = 10
->>>>>>> refs/remotes/origin/main
 
 
 def bit_to_char(bits, encoding='utf-8', errors='surrogatepass'):                    # перевод из битов в текст
@@ -63,6 +57,7 @@ def bit_to_char(bits, encoding='utf-8', errors='surrogatepass'):                
 #строку в бинарный режим
 def char_to_bit(char):
     return ''.join(format(ord(i), '08b') for i in char)
+
 # бинарный код в сэмплы
 def bit_to_sample(byte_str):
     sample_code = []
@@ -247,12 +242,8 @@ elif(CON == 2):
     data = bit_to_sample(string_bit)
     plt.plot(data)
     
-<<<<<<< HEAD
     while(True):
         #print(1)
-=======
-    while(1):
->>>>>>> refs/remotes/origin/main
         sdr.tx(data)
         sdr.tx_destroy_buffer()
         #time.sleep(1)
