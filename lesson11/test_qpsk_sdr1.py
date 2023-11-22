@@ -6,7 +6,7 @@ from scipy.signal import max_len_seq
 
 sdr = adi.Pluto('ip:192.168.2.1')
 sdr.sample_rate = 1000000
-sdr.tx_destroy_buffer()
+
  
 
 sdr.rx_lo = 2000000000
@@ -53,6 +53,7 @@ plt.scatter(x_bb.real,x_bb.imag)
 xiq=2**14*x_bb
  
 n_frame= len(xiq)
+
 sdr.tx(xiq)
 
 sdr.rx_rf_bandwidth = 1000000
@@ -60,7 +61,9 @@ sdr.rx_destroy_buffer()
 sdr.rx_hardwaregain_chan0 = -5
 sdr.rx_buffer_size =3*n_frame
 
+
 xrec1=sdr.rx()
 xrec = xrec1/np.mean(xrec1**2)
 plt.figure(2)
 plt.scatter(xrec.real,xrec.imag)
+sdr.tx_destroy_buffer()
