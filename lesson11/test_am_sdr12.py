@@ -50,6 +50,7 @@ xiq=2**14*xt
 n_frame= len(xiq)
 #plt.figure(2)
 #plt.plot(xiq)
+np.savetxt ("xiq.csv", xiq, delimiter=" , ")
 sdr.tx(xiq)
 
 sdr.rx_rf_bandwidth = 100000
