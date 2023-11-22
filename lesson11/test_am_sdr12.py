@@ -50,7 +50,7 @@ xiq=2**14*xt
 n_frame= len(xiq)
 #plt.figure(2)
 #plt.plot(xiq)
-np.savetxt ("xiq.csv", xiq, delimiter=" , ")
+
 sdr.tx(xiq)
 
 sdr.rx_rf_bandwidth = 100000
@@ -58,6 +58,7 @@ sdr.rx_destroy_buffer()
 sdr.rx_hardwaregain_chan0 = -5
 sdr.rx_buffer_size =2*n_frame
 xrec1=sdr.rx()
+np.savetxt("xrec1.csv", xrec1, delimiter=" , ")
 xrec = xrec1/np.mean(xrec1**2)
 
 fsr=2*rs/fs # частота среза фильтра
