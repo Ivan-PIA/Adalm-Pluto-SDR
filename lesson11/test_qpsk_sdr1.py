@@ -58,7 +58,8 @@ sdr.tx(xiq)
 sdr.rx_rf_bandwidth = 1000000
 sdr.rx_destroy_buffer()
 sdr.rx_hardwaregain_chan0 = -5
-sdr.rx_buffer_size =2*n_frame
+sdr.rx_buffer_size =3*n_frame
+
 xrec1=sdr.rx()
 xrec = xrec1/np.mean(xrec1**2)
 plt.figure(2)
