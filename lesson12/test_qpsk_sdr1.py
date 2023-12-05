@@ -59,41 +59,44 @@ while 1:
     sdr.tx(xiq)
     
 
-# sdr.rx_rf_bandwidth = 1000000
-# sdr.rx_destroy_buffer()
-# sdr.rx_hardwaregain_chan0 = -5
-# sdr.rx_buffer_size = n_frame
+sdr.rx_rf_bandwidth = 1000000
+sdr.rx_destroy_buffer()
+sdr.rx_hardwaregain_chan0 = -5
+sdr.rx_buffer_size = n_frame
 
 
-# xrec1=sdr.rx()
-# sdr.tx_destroy_buffer()
-# #np.savetxt("xrec1.csv", xrec1, delimiter=" , ")
-# size = len(xrec1)
-# plt.figure(1)
-# plt.scatter(xrec1.real, xrec1.imag)
+xrec1=sdr.rx()
+sdr.tx_destroy_buffer()
+np.savetxt("xrec1.csv", xrec1, delimiter=" , ")
 
-# xrec = xrec1**4 # возведение в степень qpsk
-# k = np.arange(0, size)
-# xrec2 = fft(xrec,size)
-# xrec2 = fftshift(xrec2)
+size = len(xrec1)
 
-# w = np.linspace(-np.pi,np.pi,size)
+plt.figure(1)
+plt.scatter(xrec1.real, xrec1.imag)
 
-# max_f = np.argmax(abs(xrec2))
+xrec = xrec1**4 # возведение в степень qpsk
+k = np.arange(0, size)
+xrec2 = fft(xrec,size)
+xrec2 = fftshift(xrec2)
+
+w = np.linspace(-np.pi,np.pi,size)
+
+max_f = np.argmax(abs(xrec2))
 
 
 
-# print(max_f)
-# max_index = w[max_f]
-# print("max in 'w' = ",max_index)
+print(max_f)
+max_index = w[max_f]
+print("max in 'w' = ",max_index)
+#xrec = xrec1/np.mean(xrec1**2)
+ph = max_index/4
+phlc = np.exp(-1j*ph)
+qpsk_ph = xrec1 *phlc
 
-# #xrec = xrec1/np.mean(xrec1**2)
-# ph = max_index/4
-# phlc = np.exp(-1j*ph)
-# qpsk_ph = xrec1 *phlc
-# plt.figure(2)
-# plt.stem(w,abs(xrec2))
-# plt.figure(3)
-# plt.scatter(qpsk_ph.real, qpsk_ph.imag)
+
+plt.figure(2)
+plt.stem(w,abs(xrec2))
+plt.figure(3)
+plt.scatter(qpsk_ph.real, qpsk_ph.imag)
 
 # plt.show()
