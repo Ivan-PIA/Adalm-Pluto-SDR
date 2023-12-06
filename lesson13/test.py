@@ -55,13 +55,12 @@ n_frame = len(xiq)
 # while 1:
 #     print(1)
 #     sdr.tx(xiq)
-
+sdr.tx(xiq) 
 sdr.rx_rf_bandwidth = 1000000
 sdr.rx_destroy_buffer()
 sdr.rx_hardwaregain_chan0 = -5
 sdr.rx_buffer_size = n_frame*3
 
-sdr.tx(xiq) 
 
 xrec1=sdr.rx()
 
@@ -92,7 +91,7 @@ print("max in 'w' = ",max_index)
 #xrec = xrec1/np.mean(xrec1**2)
 ph = max_index/4
 phlc = np.exp(-1j*ph)
-qpsk_ph = xrec1 *phlc
+qpsk_ph = xrec1 * phlc
 
 
 plt.figure(2)
