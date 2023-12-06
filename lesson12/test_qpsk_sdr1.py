@@ -12,8 +12,8 @@ sdr.sample_rate = 1000000
 
 sdr.rx_lo = 2000000000
 sdr.tx_lo = 2000000000
-#sdr.tx_cyclic_buffer = True
-sdr.tx_cyclic_buffer = False
+sdr.tx_cyclic_buffer = True
+#sdr.tx_cyclic_buffer = False
 sdr.tx_hardwaregain_chan0 = -5
 sdr.gain_control_mode_chan0 = "slow_attack"
 
@@ -54,24 +54,26 @@ x_bb=(xi+1j*xq)/np.sqrt(2)
 xiq=2**14*x_bb
  
 n_frame= len(xiq)
-while 1:
-    print(1)
-    sdr.tx(xiq)
-    
 
 sdr.rx_rf_bandwidth = 1000000
 sdr.rx_destroy_buffer()
 sdr.rx_hardwaregain_chan0 = -5
-sdr.rx_buffer_size = n_frame
-
+sdr.rx_buffer_size =n_frame*3
+sdr.tx(xiq)
 
 xrec1=sdr.rx()
+
+
+
+
 sdr.tx_destroy_buffer()
-np.savetxt("xrec1.csv", xrec1, delimiter=" , ")
+#np.savetxt("xrec1.csv", xrec1, delimiter=" , ")
 
 size = len(xrec1)
 
 plt.figure(1)
+plt.xlim(-3000,3000)
+plt.ylim(-3000,3000)
 plt.scatter(xrec1.real, xrec1.imag)
 
 xrec = xrec1**4 # возведение в степень qpsk
@@ -97,6 +99,8 @@ qpsk_ph = xrec1 *phlc
 plt.figure(2)
 plt.stem(w,abs(xrec2))
 plt.figure(3)
+plt.xlim(-3000,3000)
+plt.ylim(-3000,3000)
 plt.scatter(qpsk_ph.real, qpsk_ph.imag)
 
-# plt.show()
+plt.show()
