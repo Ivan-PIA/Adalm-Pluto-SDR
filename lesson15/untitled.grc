@@ -80,7 +80,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [704, 236.0]
+    coordinate: [648, 204.0]
     rotation: 0
     state: true
 - name: audio_sink_0
@@ -97,7 +97,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [936, 4.0]
+    coordinate: [1024, 124.0]
     rotation: 0
     state: true
 - name: iio_pluto_source_0
@@ -233,7 +233,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [336, 100.0]
+    coordinate: [392, 108.0]
     rotation: 0
     state: true
 - name: qtgui_freq_sink_x_0_0
@@ -314,7 +314,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [896, 356.0]
+    coordinate: [600, 532.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_0
@@ -411,7 +411,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 500.0]
+    coordinate: [608, 636.0]
     rotation: 0
     state: true
 
