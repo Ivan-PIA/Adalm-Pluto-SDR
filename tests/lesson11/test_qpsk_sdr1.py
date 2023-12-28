@@ -7,7 +7,7 @@ from scipy.signal import max_len_seq
 sdr = adi.Pluto('ip:192.168.2.1')
 sdr.sample_rate = 1000000
 
- 
+
 
 sdr.rx_lo = 2000000000
 sdr.tx_lo = 2000000000

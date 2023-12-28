@@ -3,14 +3,16 @@ import time
 import adi
 import matplotlib.pyplot as plt
 import numpy as np
+from .context import init_rx, standart_settings
+
+sdr = standart_settings("ip:192.168.2.1", 1000000)
+init_rx("ip:192.168.2.1", 1000000, 2000000000, 70)
+# sdr = adi.Pluto("ip:192.168.2.1")
 
 
-sdr = adi.Pluto("ip:192.168.2.1")
-
-
-sdr.rx_lo = 2400000000 + 2000000 * 3
-sdr.tx_lo = 2400000000 + 2000000 * 3
-sdr.sample_rate=1e6
+# sdr.rx_lo = 2400000000 + 2000000 * 3
+# sdr.tx_lo = 2400000000 + 2000000 * 3
+# sdr.sample_rate=1e6
 
 
 
