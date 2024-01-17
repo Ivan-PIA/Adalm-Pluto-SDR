@@ -1,0 +1,4 @@
+
+
+def printt():
+    print("lalatopola")
