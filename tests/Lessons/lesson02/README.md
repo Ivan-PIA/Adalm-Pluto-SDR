@@ -4,11 +4,11 @@
 
 **Время выполнения сортировки массива из 5.000.000 элементов для Lists и NumPy**
 
-![](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/lesson2/photo/2023-09-26_20-43-22.png)
+![](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/tests/Lessons/lesson2/photo/2023-09-26_20-43-22.png)
 
 **График**
 
-![Build Status](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/lesson2/photo/2023-09-26_21-37-35.png)
+![Build Status](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/tests/Lessons/lesson2/photo/2023-09-26_21-37-35.png)
 
 
 
@@ -16,6 +16,6 @@
 
 
 
-![](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/lesson2/photo/2023-09-26_22-33-20.png)
+![](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/tests/Lessons/lesson2/photo/2023-09-26_22-33-20.png)
 
 
