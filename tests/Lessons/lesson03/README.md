@@ -3,7 +3,7 @@
 
 1. При помощи приложения на **WifiAnalyzer** нашли канал наиболее мощной точки доступа. Из ___скриншота___ ниже мы видим, что это точка доступа с SSID **OnePlus 9R**
 
-![](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/lesson3/photo/photo_2023-09-27_22-36-51.jpg)
+<img src = "photo/photo_2023-09-27_22-36-51.jpg">
 
 В **WifiAnalyzer** есть информация о ___канале___ и ___несущей частоте___ в этом канале (обычно это центральная частота). У нас ___2-й канал___ и ___частота 2417 МГц___
 
@@ -57,10 +57,10 @@ plt.show()# #выводим график
 
 ## Результат :
 
-![](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/lesson3/photo/photo_2023-09-27_22-33-06.jpg) 
+<img src = "photo/photo_2023-09-27_22-33-06.jpg"> 
 
-![](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/lesson3/photo/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%20%D0%BE%D1%82%202023-09-27%2018-11-59.png)
+<img src = "photo/111.png">
 
-![](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/lesson3/photo/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%20%D0%BE%D1%82%202023-09-27%2018-12-07.png) 
+<img src = "photo/22.png"> 
 
-![](https://github.com/Ivan-PIA/Adalm-Pluto-SDR/blob/main/lesson3/photo/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%20%D0%BE%D1%82%202023-09-27%2018-12-26.png)
+<img src = "photo/3.png">
