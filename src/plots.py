@@ -10,3 +10,8 @@ def plot(a,b):
     plt.axvline(x=0,color = 'red')
     plt.plot(a,b)
     plt.show()
+
+
+
+def drav_plot():
+    pass
