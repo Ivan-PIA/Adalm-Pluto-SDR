@@ -1,4 +1,8 @@
+import random
 
+def randomDataGenerator(size):
+	data = [random.randint(0, 1) for i in range(size)]
+	return data
 
 def text_to_bits(text, encoding='utf-8', errors='surrogatepass'):
     bits = bin(int.from_bytes(text.encode(encoding, errors), 'big'))[2:]
