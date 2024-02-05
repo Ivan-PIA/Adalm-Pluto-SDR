@@ -4,4 +4,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 from src.hell import printt
 from src.plots import plot
+from src.modular import *
+from src.base import *
 
