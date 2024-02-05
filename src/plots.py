@@ -3,12 +3,12 @@ import numpy as np
 
 
 
-def plot(a,b):
+def plot(a):
     plt.title("test")
     plt.grid()
     plt.axhline(y=0,color = 'red')
     plt.axvline(x=0,color = 'red')
-    plt.plot(a,b)
+    plt.scatter(a.real, a.imag)
     plt.show()
 
 
