@@ -3,7 +3,7 @@ import numpy as np
 
 
 
-def plot(a):
+def plot_QAM(a):
     plt.title("test")
     plt.grid()
     plt.axhline(y=0,color = 'red')
