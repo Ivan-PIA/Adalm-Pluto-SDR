@@ -1,7 +1,11 @@
+'''
+Модуль "Plots"
+
+1) plot_QAM() 
+    - предназназначен для быстрой отрисовки map QAM
+    - на вход подается numpy array комплексных чисел
+'''
 import matplotlib.pyplot as plt
-import numpy as np
-
-
 
 def plot_QAM(a):
     plt.title("test")
