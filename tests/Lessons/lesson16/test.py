@@ -5,4 +5,8 @@ import adi
 
 sdr = standart_settings()
 
-init_rx(sdr,2e9,-5)
+init_rx(sdr,2e9,50)
+init_tx(sdr,2e9,50)
+
+
+
