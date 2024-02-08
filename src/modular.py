@@ -15,16 +15,19 @@
 import numpy as np
 
 def BPSK(bit_mass):
+	ampl = 2**14
 	sample = []
 	for i in range(len(bit_mass)):
 		bi = bit_mass[i]
 		real = (1 - 2 * bi) / np.sqrt(2)
 		imag = (1 - 2 * bi) / np.sqrt(2)
 		sample.append(complex(real, imag)) 
-	return np.asarray(sample)
-
+		sample = np.asarray(sample)
+		sample = sample * ampl
+		return sample
 
 def QPSK(bit_mass):
+	ampl = 2**1
 	if (len(bit_mass) % 2 != 0):
 		print("QPSK:\nError, check bit_mass length", len(bit_mass))
 		raise "error"
@@ -36,9 +39,12 @@ def QPSK(bit_mass):
 			real = (1 - 2 * b2i) / np.sqrt(2)
 			imag = (1 - 2 * b2i1) / np.sqrt(2)
 			sample.append(complex(real, imag))
-		return np.asarray(sample)
+		sample = np.asarray(sample)
+		sample = sample * ampl
+		return sample
 
 def QAM16(bit_mass):
+	ampl = 2**14
 	if (len(bit_mass) % 4 != 0):
 		print("QAM16:\nError, check bit_mass length")
 		raise "error"
@@ -52,9 +58,12 @@ def QAM16(bit_mass):
 			real = (1 - 2 * b4i) * (2 - (1 - 2 * b4i2)) / np.sqrt(10)
 			imag = (1 - 2 * b4i1) * (2 - (1 - 2 * b4i3)) / np.sqrt(10)
 			sample.append(complex(real, imag))
-		return np.asarray(sample)
+		sample = np.asarray(sample)
+		sample = sample * ampl
+		return sample
 	
 def QAM64(bit_mass):
+	ampl = 2**14
 	if (len(bit_mass) % 6 != 0):
 		print("QAM64:\nError, check bit_mass length")
 		raise "error"
@@ -70,9 +79,12 @@ def QAM64(bit_mass):
 			real = (1 - 2 * b6i) * (4 - (1 - 2 * b6i2) * (2 - (1 - 2 * b6i4))) / np.sqrt(42)
 			imag = (1 - 2 * b6i1) * (4 - (1 - 2 * b6i3) * (2 - (1 - 2 * b6i5))) / np.sqrt(42)
 			sample.append(complex(real, imag))
-		return np.asarray(sample)
+		sample = np.asarray(sample)
+		sample = sample * ampl
+		return sample
 
 def QAM256(bit_mass):
+	ampl = 2**14
 	if (len(bit_mass) % 8 != 0):
 		print("QAM256:\nError, check bit_mass length")
 		raise "error"
@@ -90,5 +102,7 @@ def QAM256(bit_mass):
 			real = (1 - 2 * b8i) * (8 - (1 - 2 * b8i2) * (4 - (1 - 2 * b8i4) * (2 - (1 - 2 * b8i6)))) / np.sqrt(170)
 			imag = (1 - 2 * b8i1) * (8 - (1 - 2 * b8i3) * (4 - (1 - 2 * b8i5) * (2 - (1 - 2 * b8i7)))) / np.sqrt(170)
 			sample.append(complex(real, imag))
-		return np.asarray(sample)
+		sample = np.asarray(sample)
+		sample = sample * ampl
+		return sample
 	
