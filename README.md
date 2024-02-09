@@ -23,3 +23,4 @@
 - [Практика 13](./tests/Lessons/lesson13/)
 - [Практика 14](./tests/Lessons/lesson14/)
 - [Практика 15](./tests/Lessons/lesson15/)
+- [Практика 16](./tests/Lessons/lesson16/)
