@@ -11,7 +11,7 @@ def eye_diagram(qpsk):
     q = qpsk
     print(qpsk.real)
     for i in range(0,len(qpsk),10):
-        plt.plot(q.real[0:10])
+        plt.plot(q.real[0:20])
         q = np.roll(qpsk,-10)
         qpsk = q
     
@@ -29,10 +29,10 @@ h1 = np.ones(10)
 
 QPSK = QPSK(bit)
 QPSK = np.repeat(QPSK, 10)
-noise = np.random.normal(0,0.1,len(QPSK))
+noise = np.random.normal(0,0.2,len(QPSK))
 QPSK = QPSK +noise
 
-conv = np.convolve(h1,QPSK,'same')
+conv = np.convolve(h1,QPSK,'full')
 
 #conv= conv+
 #QPSK = QPSK + noise_qpsk
@@ -47,7 +47,7 @@ eye_diagram(conv)
 plt.figure(3)
 plt.plot(conv.real)
 plt.figure(4)
-decode = On_eye_dig(conv,5)
+decode = On_eye_dig(conv,9)
 plt.scatter(decode.real, decode.imag)
 
 plt.show()
