@@ -9,7 +9,7 @@ bit = randomDataGenerator(100)
 
 def eye_diagram(qpsk):
     q = qpsk
-    print(qpsk.real)
+    #print(qpsk.real)
     for i in range(0,len(qpsk),10):
         plt.plot(q.real[0:20])
         q = np.roll(qpsk,-10)
@@ -61,19 +61,31 @@ conv = np.convolve(h1,QPSK,'full')
 #conv= conv+
 #QPSK = QPSK + noise_qpsk
 #noise_qpsk = np.random.normal(0,0.1,len(QPSK))
+def gard_ted(conv1):
+    errr = []
+    error = 0
+    for k in range(10,len(conv1),10):
+        #print(k)
+        error = (conv1.real[k-10]-conv1.real[k])*conv1.real[k//2]
+        conv1 = np.roll(conv1, -1)
+        
+        errr.append(error)  
+    print(errr)
+    #plt.scatter(np.asarray(errr))
 
 
-#plt.figure(1)
-#plt.scatter(QPSK.real, QPSK.imag)
 
-#plt.figure(2)
-#eye_diagram(conv)
+plt.figure(1)
+plt.scatter(QPSK.real, QPSK.imag)
 
-#plt.figure(3)
-#plt.plot(conv.real)
+plt.figure(2)
+eye_diagram(conv)
+
+plt.figure(3)
+plt.plot(conv.real)
 
 #plt.figure(4)
-conv = On_eye_dig(conv,9)
+#conv1 = On_eye_dig(conv,9)
 #plt.scatter(conv.real, conv.imag)
 
 
@@ -87,5 +99,9 @@ plt.scatter(output_signal.real,output_signal.imag)
 te = gardner_te_detector(conv, 10)
 plt.figure(6)
 plt.scatter(te.real, te.imag)
-print(te)
+#print(te)
+
+gard_ted(conv)    
+#conv1 = np.roll(conv,-5)
+
 plt.show()
