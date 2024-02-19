@@ -8,8 +8,10 @@ bit = randomDataGenerator(100)
 
 
 def eye_diagram(qpsk):
+    #qpsk = np.roll(qpsk,-2)
     q = qpsk
     #print(qpsk.real)
+    
     for i in range(0,len(qpsk),10):
         plt.plot(q.real[0:20])
         q = np.roll(qpsk,-10)
@@ -25,7 +27,7 @@ def On_eye_dig(qpsk, index): # вычленяет семпл выбранный 
 
 def PLL(conv):
     mu = 0  # коэфф фильтра 
-    theta = 1 # начальная фаза
+    theta = 0 # начальная фаза
     phase_error = np.zeros(len(conv))  # фазовая ошибка
     output_signal = np.zeros(len(conv), dtype=np.complex128)
 
@@ -52,7 +54,7 @@ h1 = np.ones(10)
 
 QPSK = QPSK(bit)
 QPSK = np.repeat(QPSK, 10)
-noise = np.random.normal(0,0.2,len(QPSK))
+noise = np.random.normal(0,0.05,len(QPSK))
 QPSK = QPSK + noise
 
 conv = np.convolve(h1,QPSK,'full')
@@ -85,7 +87,7 @@ plt.figure(3)
 plt.plot(conv.real)
 
 #plt.figure(4)
-#conv1 = On_eye_dig(conv,9)
+conv1 = On_eye_dig(conv,9)
 #plt.scatter(conv.real, conv.imag)
 
 
@@ -95,13 +97,13 @@ plt.scatter(output_signal.real,output_signal.imag)
 
 
 #plt.figure(6)
+#phase_error = PLL(conv)
 #plt.plot(phase_error)
-te = gardner_te_detector(conv, 10)
-plt.figure(6)
-plt.scatter(te.real, te.imag)
+
+
 #print(te)
 
-gard_ted(conv)    
+ 
 #conv1 = np.roll(conv,-5)
 
 plt.show()
