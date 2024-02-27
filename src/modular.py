@@ -27,7 +27,7 @@ def BPSK(bit_mass):
 		return sample
 
 def QPSK(bit_mass):
-	ampl = 2**1
+	ampl = 2**14
 	if (len(bit_mass) % 2 != 0):
 		print("QPSK:\nError, check bit_mass length", len(bit_mass))
 		raise "error"
