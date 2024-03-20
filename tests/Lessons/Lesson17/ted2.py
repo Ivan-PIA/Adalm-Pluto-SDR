@@ -109,7 +109,7 @@ def Get_Cool_Index(mass_index,qpsk):
 
 def PLL(conv):
     mu = 0  # коэфф фильтра 
-    theta = 0 # начальная фаза
+    theta = 1 # начальная фаза
     phase_error = np.zeros(len(conv))  # фазовая ошибка
     output_signal = np.zeros(len(conv), dtype=np.complex128)
 
