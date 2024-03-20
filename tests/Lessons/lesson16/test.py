@@ -74,7 +74,7 @@ def TED_loop_filter(data): #ted loop filter
 
 
 def PLL(conv):
-    mu = 0.5 # коэфф фильтра 
+    mu = 1# коэфф фильтра 
     theta = 0 # начальная фаза
     phase_error = np.zeros(len(conv))  # фазовая ошибка
     output_signal = np.zeros(len(conv), dtype=np.complex128)
@@ -123,12 +123,12 @@ plt.scatter(rx.real,rx.imag)
 
 h1 = np.ones(10)
 data = np.convolve(h1,rx,"full")/10
-data =  PLL(data)
+
 plt.figure(2)
 ted_ind = TED_loop_filter(data)
 
 data = data[ted_ind]
-
+data =  PLL(data)
 
 
 plt.figure(3)
