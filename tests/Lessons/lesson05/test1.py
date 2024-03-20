@@ -17,14 +17,18 @@ ts = 1/float(sdr.sample_rate)
 t = np.arange(0, fc*ts, ts)
 i = np.sin(2*np.pi*t*fc) * 2**14
 q = np.cos(2*np.pi*t*fc) * 2**14
-samples = i + 1j*q
+#samples = i + 1j*q
 
 #destroy buffer
 sdr.tx_destroy_buffer()
 
 # Start the transmitter
 sdr.tx_cyclic_buffer = True # Enable cyclic buffers
-sdr.tx(samples)
+sdr.tx(i)
 rx = sdr.rx()
+print(type(i[1]))
+plt.figure(1)
+plt.plot(i)
+plt.figure(2)
 plt.plot(rx)
 plt.show()
