@@ -10,5 +10,8 @@ def text_to_bits(text, encoding='utf-8', errors='surrogatepass'):
     return np.asarray(list(map(int,bits.zfill(8 * ((len(bits) + 7) // 8)))))
 
 def text_from_bits(bits, encoding='utf-8', errors='surrogatepass'):
+    bits = list(bits)
+    bits = list(map(int,bits))
+    bits = "".join(map(str, bits))
     n = int(bits, 2)
     return n.to_bytes((n.bit_length() + 7) // 8, 'big').decode(encoding, errors) or '\0'
