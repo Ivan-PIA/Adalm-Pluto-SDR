@@ -65,52 +65,6 @@ def norm_corr(x,y):
     return c_real+1j*c_imag
     
 
-def indexs_of_CP(rx, fft_len, cp):
-    """
-    Возвращает массив начала символов (вместе с CP) (чтобы только символ был нужно index + 16)
-    """
-
-        
-    corr = [] # Массив корреляции 
-    for i in range(len(rx)):
-        o = norm_corr(rx[:cp], rx[fft_len:fft_len+cp])
-        corr.append(abs(o))
-        rx = np.roll(rx, 1)
-            
-    corr = np.array(corr) / np.max(corr) # Нормирование
-
-    if corr[0] > 0.98:
-        max_len_cycle = len(corr)
-    else:
-        max_len_cycle = len(corr)-(fft_len+cp)
-
-    arr_index = [] # Массив индексов максимальных значений corr
-    for i in range(0, max_len_cycle, (fft_len+cp)):
-        max = np.max(corr[i : i+(fft_len+cp)])
-        if max > 0.9: 
-            ind = i + np.argmax(corr[i : i+(fft_len+cp)])
-            if ind < (len(corr)-(fft_len+cp)):
-                arr_index.append(ind)
-        
-    ### DEBUG
-    # print(arr_index)
-    # print(corr)
-    # from mylib import cool_plot
-    # cool_plot(corr, title='corr', show_plot=False)
-        
-    return arr_index
-
-def indiv_symbols(ofdm, cp, N_fft):
-    
-    all_sym = N_fft + cp
-        
-    index = indexs_of_CP(ofdm, N_fft, cp)
-    symbols = []
-    for ind in index:
-        symbols.append(ofdm[ind+cp : ind+all_sym])
-    
-    return symbols
-
 
 
 def correlat_ofdm(rx_ofdm, cp,num_carrier):
@@ -122,7 +76,7 @@ def correlat_ofdm(rx_ofdm, cp,num_carrier):
         corr_sum =abs(norm_corr(rx1[:cp],np.conjugate(rx1[num_carrier:num_carrier+cp])))
         #print(corr_sum)
         cor.append(corr_sum)
-        if corr_sum > max and (corr_sum.imag > 0.9 or corr_sum.real > 0.9):
+        if corr_sum > max and (corr_sum.imag > 0.98 or corr_sum.real > 0.98):
             cor_max.append(corr_sum)
             max = corr_sum
             #print(np.round(max))
@@ -171,7 +125,7 @@ def Freq_Correction(rx_ofdm, Nfft, cp):
         for n in range(i*(Nfft+cp) + cp,(i+1) * (Nfft+cp)):
             rx_ofdm[n] = rx_ofdm[n] * np.exp(-1j * 2 * np.pi * (sum/Nfft) * n_new)
             n_new += 1 
-            print(n)
+            #print(n)
         n_new = 0    
     return rx_ofdm
 
@@ -222,14 +176,14 @@ def get_index_pilot(rx_ofdm):
     return np.asarray(index_pilot)
 
 def OFDM_MODULATOR(qpsk1, num_carrier, cp, step_pilot, pss ):
-    pilot = complex(5,5)
+    pilot = complex(2,2)* 2**14
 
-    #pilot_carrier = np.arange(0,len(qpsk1),step_pilot)# for del pilot
+    pilot_carrier = np.arange(0,len(qpsk1),step_pilot)# for del pilot
 
     print("len qpsk = ",len(qpsk1))
 
 
-    added_pilot = add_pilot(qpsk1,pilot,step_pilot) * 2**14
+    added_pilot = add_pilot(qpsk1,pilot,step_pilot) 
     
     ic(added_pilot)
 
@@ -252,52 +206,100 @@ def OFDM_MODULATOR(qpsk1, num_carrier, cp, step_pilot, pss ):
     return ofdm_symbols, added_pilot
 
 
-def OFDM_DEMODULATOR(rx_sig, num_carrier, cp, len_pack, len_add_pilot, pss ):
-    pilot = complex(4,4)
+
+
+def Channel_Rating(signal, index_pilot, step, pilot):
     
-    rx_ofdm = indiv_symbols(rx_sig, cp, num_carrier)
+    Hls = signal[index_pilot] / pilot
 
+    ic(Hls)
+    plt.figure(7)
+    plt.plot(abs(Hls))
+    #print(index_pilot)
+    #interpol = np.zeros(0)
 
-    #rx_ofdm = rx_sig[index:]
-    #rx_ofdm = rx_ofdm[:len_pack]
+    # for i in range(len(Hls)-1):
+    #     x_interp = np.linspace(index_pilot[i], index_pilot[i+1], step)  # 100 точек между 0 и 1
+        
+    #     #print("lin", x_interp)
+    #     # Линейная интерполяция
+    #     y_interp = np.interp(x_interp, index_pilot, Hls)
+    #     #print("len yinter",len(y_interp))
+    #     interpol = np.concatenate([interpol, y_interp])
+
+    x_interp = np.linspace(0, len(signal), len(signal))  # 100 точек между 0 и 1
+  
+    y_interp = np.interp(x_interp, index_pilot, Hls)
+
+    interpol = y_interp
+    #print("len inter",len(interpol))
+    plt.figure(8)
+    plt.title('Интерполяция')
+    plt.stem(abs(interpol))
+    return interpol
+
+def freq_correction(signal):
+    n = len(signal)
+    corr = np.conj(signal[:-1]) * signal[1:]  # Корреляция между соседними символами
+    phase_error = np.angle(np.mean(corr))   # Оценка фазовой ошибки
+    freq_error = phase_error / (2 * np.pi)  # Оценка частотной ошибки
+    freq_correction_factor = np.exp(-1j * 2 * np.pi * freq_error * np.arange(n) / 64)
+    signal_corrected = signal * freq_correction_factor
+    return signal_corrected
+
+def OFDM_DEMODULATOR(rx_sig, num_carrier, cp, len_pack, len_add_pilot, pss ):
+    pilot = complex(2,2)
+    
+    #rx_ofdm = indiv_symbols(rx_sig, cp, num_carrier)
+    index = correlat_ofdm(rx_sig,cp,num_carrier)
+
+    rx_ofdm = rx_sig[index:]
+    rx_ofdm = rx_ofdm[:len_pack]
 
     #rx_ofdm = Freq_Correction(rx_ofdm,num_carrier, cp)
-
+    #rx_ofdm = freq_correction(rx_ofdm)
     pilot_carrier = np.arange(0,len_add_pilot,step_pilot) # for del pilot
+    rx_sig_de = delete_CP(rx_ofdm,num_carrier,cp)
+    #only_pilot = rx_sig_de[pilot_carrier]
 
-    rx_sig_de = fft(rx_ofdm)
-    print(rx_sig_de)
+    #print(rx_sig_de)
     #pilot_index = get_index_pilot(rx_sig_de)
     #rx_sig_de = PLL(rx_sig_de)
     #rx_sig_de = FLL(rx_sig_de)
     
     #print("pilot index =  ",pilot_index)
     #print("count pilot = ", len(pilot_index))
-    #rx_sig_de = del_pilot(rx_sig_de, pilot_carrier)
+    #interpolar = Channel_Rating(rx_sig_de, pilot_carrier, step_pilot, pilot)
+    #rx_sig_de = rx_sig_de / interpolar
+    
+    rx_sig_de = del_pilot(rx_sig_de, pilot_carrier)
     ic(rx_sig_de)
     
-    #rx_sig_de = PLL(rx_sig_de)
-    #rx_sig_de = FLL(rx_sig_de)
-    print("rx_ofdm = ",len(rx_sig_de))
 
 
-    #rx_sig_de = rx_sig_de[abs(rx_sig_de) >= 0.50]
+
+    #print("rx_ofdm = ",len(rx_sig_de))
+
+
+
+    rx_sig_de = rx_sig_de[abs(rx_sig_de) >= 1.00]
     print("qpsk = ",len(rx_sig_de))
 
+
     plt.figure(1)
-   
-    plt.scatter(rx_sig_de.real, rx_sig_de.imag, s = 5)  
+    colors = range(len(rx_sig_de))
+    plt.scatter(rx_sig_de.real, rx_sig_de.imag, s=5, c=colors, cmap="spring", alpha=1)
 
     return rx_sig_de  
 
 
 sdr = standart_settings("ip:192.168.2.1", 1e6, 1e3)
-
+#sdr2 = standart_settings("ip:192.168.3.1", 1e6, 1e3)
 #sdr2 = standart_settings("ip:192.168.3.1", 1e6, 1e3)
 
 num_carrier = 64
 cp = 16
-step_pilot = 10
+step_pilot = 8
 
 
 #qpsk1 = np.repeat(qpsk1,num_carrier)
@@ -328,8 +330,8 @@ len_pack = len(ofdm_symbols)
 #ofdm_symbols = ofdm_symbols * 2**10
 
 
-tx_signal(sdr,2e9,0,ofdm_symbols)
-rx_sig = rx_signal(sdr,2e9,20,30)
+tx_signal(sdr,1900e6,0,ofdm_symbols)
+rx_sig = rx_signal(sdr,1900e6,20,30)
 
 rxMax = max(rx_sig.real)
 rx_sig = rx_sig / rxMax
