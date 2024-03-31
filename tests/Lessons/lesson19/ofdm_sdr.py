@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from context import *
 from icecream import ic
-
+from viterbi import Viterbi
 
 import sys
 
@@ -43,17 +43,18 @@ def fill_zeros(arr1, num):
         print("длина должна быть больше")
     return arr1
 
-def gen_ofdm_symbols(qpsk1,num_carrier,cp):
-
+def gen_ofdm_symbols(qpsk1,num_carrier,cp, pss):
+    count_ofdm = 0
     ofdm_symbols = np.zeros(0)
     qpsk = fill_zeros(qpsk1,num_carrier)
     print("qpsk",len(qpsk))
     for i in range(len(qpsk)//num_carrier):
-        ofdm_symbol = np.fft.ifft(qpsk[i * num_carrier : (i+1) * num_carrier], num_carrier)
+        count_ofdm +=1
+        ofdm_symbol = np.fft.ifft((qpsk[i * num_carrier : (i+1) * num_carrier]), num_carrier) 
         ofdm_symbols = np.concatenate([ofdm_symbols, ofdm_symbol[-cp:], ofdm_symbol])
-        
+    #ofdm_symbols = np.concatenate([pss, ofdm_symbols])
+    print("колличество офдм символов", count_ofdm)
     return ofdm_symbols
-
 
 def norm_corr(x,y):
     #x_normalized = (cp1 - np.mean(cp1)) / np.std(cp1)
@@ -70,6 +71,7 @@ def correlat_ofdm(rx_ofdm, cp,num_carrier):
     rx1 = rx_ofdm
     cor = []
     cor_max = []
+    index_cor = []
     for j in range(len(rx1)):
         corr_sum =abs(norm_corr(rx1[:cp],np.conjugate(rx1[num_carrier:num_carrier+cp])))
         #print(corr_sum)
@@ -79,10 +81,12 @@ def correlat_ofdm(rx_ofdm, cp,num_carrier):
             max = corr_sum
             #print(np.round(max))
             index = j
+            index_cor.append(index)
         rx1= np.roll(rx1,-1)
 
     cor  = np.asarray(cor)
     ic(cor_max)
+    #index = index_cor[len(index_cor)]
     #plt.figure(3)
     #plt.plot(cor.real)
     #plt.plot(cor.imag)
@@ -120,8 +124,8 @@ def Freq_Correction(rx_ofdm, Nfft, cp):
         
         e1 = rx_ofdm[(i * (Nfft + cp)) :( i * (Nfft + cp) + cp)]
         e2 = rx_ofdm[(i * (Nfft + cp) + Nfft):(i * (Nfft + cp) + (Nfft+cp))]
-        sum = np.sum(np.conjugate(e1) * e2)/(np.pi*2)
-
+        sum = abs(np.sum(np.conjugate(e1) * e2)/(np.pi*2))
+        ic(sum)
 
         n_new = 0 
         for n in range(i*(Nfft+cp) + cp,(i+1) * (Nfft+cp)):
@@ -130,6 +134,38 @@ def Freq_Correction(rx_ofdm, Nfft, cp):
             #print(n)
         n_new = 0    
     return rx_ofdm
+
+
+def Classen_Freq(rx_sig,  Nfft, pilot, index_pilot):
+    eps_all = []
+    eps = 0
+    index_pilot = index_pilot[1:]
+    
+    
+    for i in range(-3,3):
+
+        y_e = rx_sig[index_pilot]
+        for j in range(len(y_e)//2):
+            eps += (pilot * np.conjugate(pilot) * y_e[j] * np.conjugate(y_e[j+6]))/ (np.pi * Nfft)
+            #print(j)
+        
+        eps_all.append(abs(eps))
+        ic(index_pilot + i)
+        y_e = rx_sig[index_pilot]
+        eps = 0
+
+    max_eps = np.max(eps_all)
+    ic(eps_all)
+    for i in range(len(rx_sig)//(Nfft)):
+        n_new = 0 
+        for n in range(i*(Nfft),(i+1) * (Nfft)):
+            rx_sig[n] = rx_sig[n] * np.exp(-1j * 2 * np.pi * 0.1711/Nfft * n_new)
+            n_new += 1 
+            #print(n)
+        n_new = 0 
+    return rx_sig    
+   ## for i in range(len(rx_ofdm)//(Nfft+cp)):
+
 
 def PLL(conv):
     mu = 1# коэфф фильтра 
@@ -148,7 +184,7 @@ def PLL(conv):
 
 def FLL(conv):
     mu = 0.01
-    omega = 0.32 # TODO: нужно протестировать для разных сигналов, пока непонятно, работает ли этот коэффициент для всех QPSK-сигналов
+    omega = -0.2# TODO: нужно протестировать для разных сигналов, пока непонятно, работает ли этот коэффициент для всех QPSK-сигналов
     freq_error = np.zeros(len(conv))
     output_signal = np.zeros(len(conv), dtype=np.complex128)
 
@@ -159,14 +195,29 @@ def FLL(conv):
         output_signal[n] = conv[n] * np.exp(-1j * omega)
     return output_signal
 
-def correlate_frame(signal, pss):
+def correlate_frame(signal, len_pss, len_frame):
     max = 0
-    for j in range(len(signal)-len(pss)):
-        corr_sum = np.correlate(pss, signal[:(len(pss))])
-        if corr_sum > max:
+    rx1 = signal
+    cor = []
+    cor_max = []
+    for j in range(len(rx1)):
+        corr_sum = abs(norm_corr(rx1[:len_pss],np.conjugate(rx1[len_frame:(len_frame + len_pss)])))
+        #print(corr_sum)
+        cor.append(corr_sum)
+        if corr_sum > max and (corr_sum.imag > 0.98 or corr_sum.real > 0.98):
+            cor_max.append(corr_sum)
             max = corr_sum
+            #print(np.round(max))
             index = j
-        signal = np.roll(signal,-1)
+        rx1= np.roll(rx1,-1)
+
+    cor  = np.asarray(cor)
+    ic(cor_max)
+    plt.figure(3)
+    plt.plot(cor.real)
+    plt.plot(cor.imag)
+    #print("ind",index)
+    #return (index - (cp+num_carrier))
     return index
 
 
@@ -249,7 +300,7 @@ def helper_ofdm_frequency_offset(rx_waveform):
 def OFDM_MODULATOR(qpsk1, num_carrier, cp, step_pilot, pss ):
     pilot = complex(2,2)* 2**14
 
-    pilot_carrier = np.arange(0,len(qpsk1),step_pilot)# for del pilot
+    #pilot_carrier = np.arange(0,len(qpsk1),step_pilot)# for del pilot
 
     print("len qpsk = ",len(qpsk1))
 
@@ -261,18 +312,18 @@ def OFDM_MODULATOR(qpsk1, num_carrier, cp, step_pilot, pss ):
     pilot_carrier = np.arange(0,len(added_pilot),step_pilot)# for del pilot
     del_p = del_pilot(added_pilot, pilot_carrier)
     #ic(del_p)
-   # plt.figure(2)
+    #plt.figure(2)
     #plt.title("On TX")
-   # plt.scatter(added_pilot.real, added_pilot.imag)
-   # plt.figure(5)
+    #plt.scatter(added_pilot.real, added_pilot.imag)
+    #plt.figure(5)
     #plt.title("On TX2")
     #plt.scatter(del_p.real, del_p.imag)
-
-    ofdm_symbols = gen_ofdm_symbols(added_pilot, num_carrier,cp)
+    pss = pss * 2**14
+    ofdm_symbols = gen_ofdm_symbols(added_pilot, num_carrier,cp, pss)
     #print(np.ravel(ofdm_symbols))
 
     print("len ofdm_simbols = ",len(ofdm_symbols))
-    pss = pss * 2**14
+    
     #ofdm_symbols = np.concatenate([pss, ofdm_symbols])
     return ofdm_symbols, added_pilot
 
@@ -289,15 +340,18 @@ def Channel_Rating(signal, index_pilot, step, pilot):
     
     Hls = signal[index_pilot] / pilot
     #Hls = multiply_every_second_element(Hls, 2)
-    #for i in range(len(Hls)):
-        #if abs(Hls[i]) < 1.5:
-            #Hls[i] = np.mean(Hls)
+    if 1:  
+        for i in range(len(Hls)):
+            if abs(Hls[i]) < 2.5:
+                Hls[i] = np.mean(Hls)
     #Hls = np.ones(len(Hls))*2
     ic(Hls)
-    plt.figure(7)
-    plt.stem(abs(Hls), "r")
-    plt.stem(np.angle(Hls))
-    #print(index_pilot)
+    if 1:
+        plt.figure(7)
+        plt.stem(abs(Hls), "r",label='pilot - ampl')
+        plt.stem(np.angle(Hls),label='pilot - phase')
+        plt.legend(loc='upper right')
+        print(index_pilot)
     interpol = np.zeros(0)
 
     #for i in range(len(Hls)-1):
@@ -315,9 +369,12 @@ def Channel_Rating(signal, index_pilot, step, pilot):
 
     interpol = y_interp
     #print("len inter",len(interpol))
-    plt.figure(8)
-    plt.title('Интерполяция')
-    plt.stem(abs(interpol))
+    if 1:
+        plt.figure(8)
+        plt.title('Интерполяция')
+        plt.stem(abs(interpol))
+        plt.xlabel("")
+        plt.ylabel("ampl")
     return interpol
 
 def freq_correction(signal):
@@ -329,31 +386,35 @@ def freq_correction(signal):
     signal_corrected = signal * freq_correction_factor
     return signal_corrected
 
-def OFDM_DEMODULATOR(rx_sig, num_carrier, cp, len_pack, len_add_pilot, pss ):
+def OFDM_DEMODULATOR(rx_sig, num_carrier, cp, len_pack, add_pilot, pss, step_pilot ):
     pilot = complex(2,2)
     print("----------",sys.getsizeof(rx_sig[0]))
     
     #rx_ofdm = indiv_symbols(rx_sig, cp, num_carrier)
     index = correlat_ofdm(rx_sig,cp,num_carrier)
-    
+    #index = correlate_frame(rx_sig, len(pss), len_pack)
+
     rx_ofdm = rx_sig[index:]
+    #rx_ofdm = rx_sig[len(pss):]
     rx_ofdm = rx_ofdm[:len_pack]
     
     #rx_ofdm = Freq_Correction(rx_ofdm,num_carrier, cp)
     #rx_ofdm = helper_ofdm_frequency_offset(rx_ofdm)
     
-    pilot_carrier = np.arange(0,len_add_pilot,step_pilot) # for del pilot
+    pilot_carrier = np.arange(0,len(add_pilot),step_pilot) # for del pilot
+    
     rx_sig_de = delete_CP(rx_ofdm,num_carrier,cp)
+    #rx_sig_de = Classen_Freq(rx_sig_de, num_carrier,pilot, pilot_carrier)
 
-    
-    
+    #rx_sig_de = PLL(rx_sig_de)
+    #rx_sig_de = FLL(rx_sig_de)
+
     rx_sig_de_pilot = del_pilot(rx_sig_de, pilot_carrier)
     
     rx_sig_de_pilot = rx_sig_de_pilot[abs(rx_sig_de_pilot) >= 1.00]
-
+    
     plt.figure(1)
-    colors = range(len(rx_sig_de_pilot))
-    plt.scatter(rx_sig_de_pilot.real, rx_sig_de_pilot.imag, s=5, c=colors, cmap="prism", alpha=1)
+    plot_QAM(rx_sig_de_pilot, "Befor Interpolation")
 
     #only_pilot = rx_sig_de[pilot_carrier]
 
@@ -370,14 +431,14 @@ def OFDM_DEMODULATOR(rx_sig, num_carrier, cp, len_pack, len_add_pilot, pss ):
     rx_sig_de = rx_sig_de / interpolar
     
     rx_sig_de = del_pilot(rx_sig_de, pilot_carrier)
-    rx_sig_de = rx_sig_de[abs(rx_sig_de) >= 1.00]
+    rx_sig_de = rx_sig_de[abs(rx_sig_de) >= 0.4]
 
     #ic(rx_sig_de)
     #rx_sig_de = PLL(rx_sig_de)
     
     plt.figure(9)
-    colors = range(len(rx_sig_de))
-    plt.scatter(rx_sig_de.real, rx_sig_de.imag, s=5, c=colors, cmap="prism", alpha=1)
+
+    plot_QAM(rx_sig_de, "After Interpolation")
 
 
     #print("rx_ofdm = ",len(rx_sig_de))
@@ -403,7 +464,6 @@ num_carrier = 64
 cp = 16
 step_pilot = 8
 
-
 #qpsk1 = np.repeat(qpsk1,num_carrier)
 
 pss = np.array([1, -1, -1,  1, -1, -1, -1, -1,  1,  1, -1, -1, -1,  1,  1, -1,
@@ -415,14 +475,18 @@ pss = np.array([1, -1, -1,  1, -1, -1, -1, -1,  1,  1, -1, -1, -1,  1,  1, -1,
                    -1, -1,  1, -1, -1,  1,  1,  1, -1,  1, -1,  1,  1, -1,  1, -1,
                    -1, -1, -1, -1,  1, -1,  1, -1,  1, -1,  1,  1,  1,  1, -1])
 
-mes = "lalalavavavavavfjkafbaldjgvbcljbphlskjlskkck,dnkhehdvbh123456"
+mes = "lalalavavavavavfjkafbaldj123456781" #2 ofdm 
+mes2 = "lalalavavavavavfjkafbaldj12erwdgnsh"#3 ofdm 
 
-bit = text_to_bits("lalalavavavavavfjkafbaldjgvbcljbphlskjlskkck,dnkhehdvbh123456")
+#dot11a_codec = Viterbi(7, [91, 121])
+bit = text_to_bits(mes)
+
+#bit = dot11a_codec.encode(bit)
 #print(list(bit))
 qpsk1 = QPSK(bit)
 len_qpsk = len(qpsk1)
 ofdm_symbols, added_pilot  = OFDM_MODULATOR(qpsk1, num_carrier,cp,step_pilot, pss)
-len_added_pilot = len(added_pilot)
+
 
 
 #plt.figure(4)
@@ -433,7 +497,7 @@ len_pack = len(ofdm_symbols)
 
 
 tx_signal(sdr,1900e6,0,ofdm_symbols)
-rx_sig = rx_signal(sdr,1900e6,20,30)
+rx_sig = rx_signal(sdr,1900e6,20,3)
 
 rxMax = max(rx_sig.real)
 rx_sig = rx_sig / rxMax
@@ -445,13 +509,14 @@ rx_sig = rx_sig / rxMax
 #DEMODULATOR#
 ##########
 
-rx_chanel,rx_sig_de  = OFDM_DEMODULATOR(rx_sig, num_carrier, cp, len_pack , len_added_pilot, pss)
+rx_chanel,rx_sig_de  = OFDM_DEMODULATOR(rx_sig, num_carrier, cp, len_pack , added_pilot, pss, step_pilot)
 
 
 
 deqpsk = DeQPSK(rx_sig_de)
 deqpsk2 = DeQPSK(rx_chanel)
-
+#deqpsk = dot11a_codec.decode(deqpsk)
+#deqpsk2 = dot11a_codec.decode(deqpsk2)
 
 #print("j,fklf = ",len(deqpsk))
 print(len(deqpsk))
@@ -464,7 +529,7 @@ text2 = bits_array_to_text(deqpsk2)
 print("------",text,"------\n\n")
 print("-",text2,"-")
 #print(text)
-if mes == text:
+if mes == text2:
     print("Worker coooooollll")
 else:
     print("bad boy")
