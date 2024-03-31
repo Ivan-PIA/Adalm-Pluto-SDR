@@ -7,13 +7,16 @@
 '''
 import matplotlib.pyplot as plt
 
-def plot_QAM(a):
-    plt.title("test")
-    plt.grid()
+def plot_QAM(a, title = "qam"):
+    plt.title(title)
+    plt.grid(0)
     plt.axhline(y=0,color = 'red')
     plt.axvline(x=0,color = 'red')
-    plt.scatter(a.real, a.imag)
-    plt.show()
+    colors = range(len(a))
+    plt.scatter(a.real, a.imag, s=5, c=colors, cmap="prism", alpha=1)
+    plt.xlabel("real")
+    plt.ylabel("imag")
+    #plt.show()
 
 
 
