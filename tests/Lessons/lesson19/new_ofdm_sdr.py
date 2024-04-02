@@ -209,7 +209,7 @@ def Freq_Correction(rx_ofdm, Nfft, cp):
 
         n_new = 0 
         for n in range(i*(Nfft+cp) + cp,(i+1) * (Nfft+cp)):
-            rx_ofdm[n] = rx_ofdm[n] * np.exp(-1j * 2 * np.pi * (sum/Nfft) * n_new)
+            rx_ofdm[n] = rx_ofdm[n] * np.exp(-1j * 2 * np.pi * (0.73/Nfft) * n_new)
             n_new += 1 
             #print(n)
         n_new = 0    
@@ -225,14 +225,13 @@ sdr = standart_settings("ip:192.168.2.1", 1e6, 1e3)
 
 num_carrier = 64
 
-N_pilot = 6 
-GB_len = 20
+N_pilot = 10
+GB_len = 28
 CP = 16
 
-mes = "lalalavavavavavfjkafbaldj123456781lalalavavavavavfjkafbaldj12erwdgnshфывафаывфыафывфвфывфвфы" #2 ofdm 
-mes2 = "lalalavavavava"#3 ofdm 
-
-bit = randomDataGenerator(16000)
+mes = "lalalavavavavavfjkafbaldj123456781lalalavavavavavfjkafbaldj12erwdgns" #2 ofdm 
+mes2 = "A small text 1 2 3 4 5"
+bit = randomDataGenerator(240)
 bit1 = text_to_bits(mes2)
 
 
@@ -251,10 +250,10 @@ ofdm, last_ofdm_data = OFDM_MOD(num_carrier, GB_len, N_pilot, qpsk1, CP)
 
 
 tx_signal(sdr,1900e6,0,ofdm)
-rx_sig = rx_signal(sdr,1900e6,20,1)
+rx_sig = rx_signal(sdr,1900e6,20,30)
 
 rxMax = max(rx_sig.real)
-rx_sig = rx_sig / rxMax
+#rx_sig = rx_sig / rxMax
 
 index = correlat_ofdm(rx_sig,CP,num_carrier)
 #index = correlate_frame(rx_sig, len(pss), len_pack)
@@ -307,11 +306,33 @@ data_pilot = data_pilot/ inter
 #data_carrier2 = data_carrier - GB_len//2 - 1
 
 #print(inter)
-print("equal = ", data_pilot)
+#print("equal = ", data_pilot)
 plt.figure(2)
 plot_QAM(data_pilot, "AFTER Interpolation")
 
-# ofdm2 = inter.reshape(len(inter)//(num_carrier-GB_len),num_carrier-GB_len)
+data_carrier1_not_pilot = activ_carriers(num_carrier, GB_len, pilot_carrier) 
+
+
+for i in range(len(data_carrier1_not_pilot)):
+    if data_carrier1_not_pilot[i] > num_carrier//2:
+        data_carrier1_not_pilot[i] -=1
+
+data_carrier1_not_pilot = data_carrier1_not_pilot - GB_len//2
+print("not_pilot ",data_carrier1_not_pilot)  
+
+ofdm2 = data_pilot.reshape(len(data_pilot)//(num_carrier-GB_len),num_carrier-GB_len)
+
+print("oly_pilot: ",pilot_carrier-GB_len//2)
+
+print("ofdm2 = ", len(ofdm2),len(ofdm2[0]), ofdm2)
+
+data = np.zeros(0)
+for i in range(len(ofdm2)):
+        #print(i)
+        qpsk = ofdm2[i][data_carrier1_not_pilot]
+        data = np.concatenate([data, qpsk])
+
+
 # print(ofdm2)
 
 # good2 = np.zeros(0)
@@ -322,15 +343,15 @@ plot_QAM(data_pilot, "AFTER Interpolation")
 #         good2 = np.concatenate([good2, qpsk])
 
 
+data = data[abs(data) >= 0.3]
+
+plt.figure(3)
+plot_QAM(data, "qpsk")
 
 
-#plt.figure(3)
-#plot_QAM(good2, "qpsk")
 
-
-
-#deqpsk = DeQPSK(good2)
-#text = bits_array_to_text(deqpsk)
-#print(text)
+deqpsk = DeQPSK(data)
+text = bits_array_to_text(deqpsk)
+print(text)
 #print(len(good2))
 plt.show()
