@@ -67,8 +67,7 @@ def generate_pilot_carriers(N_fft, GB_len, N_pil):
 
     return pilot_carriers
 
-
-def delete_CP(rx_ofdm, num_carrier, cp):
+def delete_CP(rx_ofdm, num_carrier, cp): # удаление циклического префикса 
 
     rx_sig_de = np.zeros(0)
 
@@ -80,8 +79,7 @@ def delete_CP(rx_ofdm, num_carrier, cp):
     #print("alleeee",len(rx_sig_de))
     return rx_sig_de
 
-
-def OFDM_MOD(N_fft, GB_len, N_pil, QAM , CP):
+def OFDM_MOD(N_fft, GB_len, N_pil, QAM , CP): # формирование OFDM символы
     pilot = complex(1,1) * 2**14
     len_data = N_fft-N_pil-GB_len
 
@@ -107,7 +105,7 @@ def OFDM_MOD(N_fft, GB_len, N_pil, QAM , CP):
 
     return ofdm_ifft_cp, data_carrier1
 
-def correlat_ofdm(rx_ofdm, cp,num_carrier):
+def correlat_ofdm(rx_ofdm, cp,num_carrier): # корреляция по циклическому префиксу 
     max = 0
     rx1 = rx_ofdm
     cor = []
@@ -141,24 +139,26 @@ def interpolatin_pilot(rx_pilot,pilot_carrier, rx_sync,GB_len):
     num_carrier = len(rx_sync[0])
     
     pilot = complex(1,1) 
-    Hls = rx_pilot / pilot
+    Hls = rx_pilot / pilot                                                    # частотная характеристика канала на пилотах
 
     Hls1 = Hls.flatten()
 
+    if 1:                                                                    
+        plt.figure(7)
+        plt.title("Частотная характеристика канала на пилотах")
+        plt.stem(abs(Hls1), "r",label='pilot - ampl')
+        plt.stem(np.angle(Hls1),label='pilot - phase')
+        plt.legend(loc='upper right')
 
-    plt.figure(7)
-    plt.title("Частотная характеристика канала на пилотах")
-    plt.stem(abs(Hls1), "r",label='pilot - ampl')
-    plt.stem(np.angle(Hls1),label='pilot - phase')
-    plt.legend(loc='upper right')
-
-    pilot_carrier = pilot_carrier-GB_len//2
+    pilot_carrier = pilot_carrier-GB_len//2                                   # индексы пилотов без защитных нулей
     print("pppp",pilot_carrier)
     #print(Hls)
 
     all_inter = np.zeros(0)
-    for i in  range(count_ofdm):
-        x_interp = np.linspace(0, num_carrier- GB_len, num_carrier- GB_len)  
+
+    ### Интерполяция ###
+    for i in  range(count_ofdm):                                               # цикл по количеству ofdm символов
+        x_interp = np.linspace(0, num_carrier - GB_len, num_carrier - GB_len)  # цикл по количеству ofdm символов
         interpol = np.interp(x_interp, pilot_carrier-GB_len//2, Hls[i])
         all_inter = np.concatenate([all_inter, interpol])
 
@@ -180,13 +180,10 @@ def get_value_pilot(rx, index_pilot):
     
     return value_pilot    
 
-def Classen_Freq(rx_sig,  Nfft, pilot, index_pilot):
+def Classen_Freq(rx_sig,  Nfft, pilot, index_pilot):     #Частотная синхронизация 
     eps_all = []
     eps = 0
     #index_pilot = index_pilot[1:]
-    
-    
-#
     #max_eps = np.max(eps_all)
     ic(eps_all)
     for i in range(len(rx_sig)//(Nfft)):
@@ -218,10 +215,8 @@ def Freq_Correction(rx_ofdm, Nfft, cp):
 
 
 
-
 sdr = standart_settings("ip:192.168.2.1", 1e6, 1e3)
 #sdr2 = standart_settings("ip:192.168.3.1", 1e6, 1e3)
-
 
 num_carrier = 64
 
@@ -310,6 +305,8 @@ data_pilot = data_pilot/ inter
 plt.figure(2)
 plot_QAM(data_pilot, "AFTER Interpolation")
 
+
+# закинуть в функцию
 data_carrier1_not_pilot = activ_carriers(num_carrier, GB_len, pilot_carrier) 
 
 
@@ -333,17 +330,8 @@ for i in range(len(ofdm2)):
         data = np.concatenate([data, qpsk])
 
 
-# print(ofdm2)
 
-# good2 = np.zeros(0)
-
-# for i in range(len(ofdm2)):
-#         #print(i)
-#         qpsk = ofdm2[i][data_carrier2]
-#         good2 = np.concatenate([good2, qpsk])
-
-
-data = data[abs(data) >= 0.3]
+data = data[abs(data) >= 0.3] # удаление нулей из последнего ofdm
 
 plt.figure(3)
 plot_QAM(data, "qpsk")
@@ -353,5 +341,4 @@ plot_QAM(data, "qpsk")
 deqpsk = DeQPSK(data)
 text = bits_array_to_text(deqpsk)
 print(text)
-#print(len(good2))
 plt.show()
