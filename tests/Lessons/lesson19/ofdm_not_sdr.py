@@ -199,7 +199,7 @@ deqpsk = DeQPSK(rx_sig_de)
 print(len(deqpsk))
 
 print(bit)
-text = text_from_bits(bit)
+text = bits_array_to_text(deqpsk)
 
 print(text)
 #plt.figure(1)
