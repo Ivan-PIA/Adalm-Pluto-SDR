@@ -8,6 +8,7 @@
 import matplotlib.pyplot as plt
 
 def plot_QAM(a, title = "qam"):
+    plt.figure(figsize=(10,10))
     plt.title(title)
     plt.grid(0)
     plt.axhline(y=0,color = 'red')
