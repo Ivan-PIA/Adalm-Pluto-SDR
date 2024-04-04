@@ -124,12 +124,13 @@ def correlat_ofdm(rx_ofdm, cp,num_carrier): # корреляция по цикл
         rx1= np.roll(rx1,-1)
 
     cor  = np.asarray(cor)
+    print(cor)
     ic(cor_max)
     #index = index_cor[len(index_cor)]
     #plt.figure(3)
     #plt.plot(cor.real)
     #plt.plot(cor.imag)
-    print("ind",index)
+    #print("ind",index)
     #return (index - (cp+num_carrier))
     return index
 
@@ -180,43 +181,77 @@ def get_value_pilot(rx, index_pilot):
     
     return value_pilot    
 
-def Classen_Freq(rx_sig,  Nfft, pilot, index_pilot):     #Частотная синхронизация 
+def Classen_Freq(ofdm,  Nfft, pilot, pilot_carrier):     #Частотная синхронизация 
     eps_all = []
+    eps_tran = []
+    off = []
     eps = 0
     #index_pilot = index_pilot[1:]
     #max_eps = np.max(eps_all)
+    print("pilot ",pilot_carrier)
+    for sym in range(len(ofdm)-1):
+        for offset in range(-10,10):
+            eps_a = 0
+            eps_f1 = 0
+            pilot_carrier1 = pilot_carrier + offset
+            e1 = ofdm[sym][pilot_carrier1]                    # все пилоты одного символа
+            e2 = np.conjugate(ofdm[sym+1][pilot_carrier1])    # все пилоты соседнего символа
+            
+            for pil in range(len(pilot_carrier)):
+                eps_a += abs(pilot * np.conjugate(pilot) * e1[pil] * np.conjugate(e2[pil]))/ (len(ofdm[0]*2*np.pi))
+                eps_f1 += np.angle(pilot * np.conjugate(pilot) * e1[pil] * np.conjugate(e2[pil])) / (len(ofdm[0]*2*np.pi*1))
+            eps_all.append(eps_a)
+            eps_tran.append(eps_f1)            
+           
+
+
+    #eps_norm = eps_all / np.max(eps_all)
+    max_eps = np.max(eps_all)
+
+    ic(eps_tran)
+
+    ind_max = np.argmax(eps_all)
+
+
+    of_drob = eps_tran[ind_max]
+    ind_max-=24
+    
+    ofset_fin = ind_max + of_drob
+
+    print("max off", ofset_fin)
     ic(eps_all)
-    for i in range(len(rx_sig)//(Nfft)):
-        n_new = 0 
-        for n in range(i*(Nfft),(i+1) * (Nfft)):
-            rx_sig[n] = rx_sig[n] * np.exp(-1j * 2 * np.pi * 2/Nfft * n_new)
-            n_new += 1 
+    for i in range(len(ofdm)): # количество ofdm символов
+  
+        for n in range(0,Nfft):
+            ofdm[i][n] = ofdm[i][n] * np.exp(-1j * 2 * np.pi * (0)/Nfft * n)
+           
             #print(n)
-        n_new = 0 
-    return rx_sig    
+  
+    return ofdm      
 
-def Freq_Correction(rx_ofdm, Nfft, cp):
 
-    for i in range(len(rx_ofdm)//(Nfft+cp)):
+
+def Freq_Correction(ofdm, Nfft, cp): # для матрицы
+
+    for i in range(len(ofdm)//(Nfft+cp)): # 
         
-        e1 = rx_ofdm[(i * (Nfft + cp)) :( i * (Nfft + cp) + cp)]
-        e2 = rx_ofdm[(i * (Nfft + cp) + Nfft):(i * (Nfft + cp) + (Nfft+cp))]
+        e1 = ofdm[i][:cp]
+        e2 = ofdm[i+1][:cp]
         sum = abs(np.sum(np.conjugate(e1) * e2)/(np.pi*2))
         ic(sum)
 
-        n_new = 0 
-        for n in range(i*(Nfft+cp) + cp,(i+1) * (Nfft+cp)):
-            rx_ofdm[n] = rx_ofdm[n] * np.exp(-1j * 2 * np.pi * (0.73/Nfft) * n_new)
-            n_new += 1 
-            #print(n)
-        n_new = 0    
-    return rx_ofdm
+    for i in range(len(ofdm)//(Nfft)): # количество ofdm символов
+        for n in range(0, Nfft):
+            ofdm[i][n] = ofdm[i][n] * np.exp(-1j * 2 * np.pi * (sum/Nfft) * n)   
+
+    return ofdm.flatten()
+
 
 
 
 
 sdr = standart_settings("ip:192.168.2.1", 1e6, 1e3)
-#sdr2 = standart_settings("ip:192.168.3.1", 1e6, 1e3)
+sdr2 = standart_settings("ip:192.168.3.1", 1e6, 1e3)
 
 num_carrier = 64
 
@@ -225,8 +260,8 @@ GB_len = 28
 CP = 16
 
 mes = "lalalavavavavavfjkafbaldj123456781lalalavavavavavfjkafbaldj12erwdgns" #2 ofdm 
-mes2 = "A small text 1 2 3 4 5"
-bit = randomDataGenerator(240)
+mes2 = "A small sfsdfsdfsf"
+bit = randomDataGenerator(2400)
 bit1 = text_to_bits(mes2)
 
 
@@ -234,7 +269,7 @@ qpsk1 = QPSK(bit1)
 len_qpsk = len(qpsk1)
 print(len_qpsk)
 
-qpsk = np.ones(256) * complex(0.7,0.7)
+
 
 pilot_carrier = generate_pilot_carriers(num_carrier, GB_len, N_pilot)
 data_carrier = activ_carriers(num_carrier, GB_len, pilot_carrier)
@@ -244,11 +279,11 @@ print(data_carrier)
 ofdm, last_ofdm_data = OFDM_MOD(num_carrier, GB_len, N_pilot, qpsk1, CP)
 
 
-tx_signal(sdr,1900e6,0,ofdm)
-rx_sig = rx_signal(sdr,1900e6,20,30)
+tx_signal(sdr,2000e6,0,ofdm)
+rx_sig = rx_signal(sdr2,2000e6,20,30)
 
 rxMax = max(rx_sig.real)
-#rx_sig = rx_sig / rxMax
+rx_sig = rx_sig / rxMax
 
 index = correlat_ofdm(rx_sig,CP,num_carrier)
 #index = correlate_frame(rx_sig, len(pss), len_pack)
@@ -257,18 +292,28 @@ rx_ofdm = rx_sig[index:]
 #rx_ofdm = rx_sig[len(pss):]
 rx_ofdm = rx_ofdm[:len(ofdm)]
 
-#rx_ofdm = Freq_Correction(rx_ofdm,num_carrier,CP)
+#ofdm2 = rx_ofdm.reshape(len(rx_ofdm)//(num_carrier+CP),num_carrier+CP)
+
+#rx_ofdm = Freq_Correction(ofdm2, num_carrier, CP)
+
+
+
 
 del_cp = delete_CP(rx_ofdm, num_carrier, CP)
 
 pilot = complex(1,1)
 
-#del_cp = Classen_Freq(del_cp,num_carrier,pilot, pilot_carrier)
+ofdm1 = del_cp.reshape(len(del_cp)//num_carrier,num_carrier)
 
-plt.figure(1)
+#ofdm1 = Classen_Freq(ofdm1,num_carrier,pilot, pilot_carrier)
+
+#del_cp = ofdm1.flatten()
 plot_QAM(del_cp, "Befor Interpolation")
 
-ofdm1 = del_cp.reshape(len(del_cp)//num_carrier,num_carrier)
+
+
+#ofdm1 = Classen_Freq(ofdm1,num_carrier,pilot, pilot_carrier)
+
 #print(ofdm1)
 value_pilot = get_value_pilot(ofdm1,pilot_carrier)
 inter = interpolatin_pilot(value_pilot,pilot_carrier, ofdm1, GB_len)
@@ -302,7 +347,7 @@ data_pilot = data_pilot/ inter
 
 #print(inter)
 #print("equal = ", data_pilot)
-plt.figure(2)
+
 plot_QAM(data_pilot, "AFTER Interpolation")
 
 
@@ -321,7 +366,7 @@ ofdm2 = data_pilot.reshape(len(data_pilot)//(num_carrier-GB_len),num_carrier-GB_
 
 print("oly_pilot: ",pilot_carrier-GB_len//2)
 
-print("ofdm2 = ", len(ofdm2),len(ofdm2[0]), ofdm2)
+#print("ofdm2 = ", len(ofdm2),len(ofdm2[0]), ofdm2)
 
 data = np.zeros(0)
 for i in range(len(ofdm2)):
@@ -333,7 +378,7 @@ for i in range(len(ofdm2)):
 
 data = data[abs(data) >= 0.3] # удаление нулей из последнего ofdm
 
-plt.figure(3)
+
 plot_QAM(data, "qpsk")
 
 
