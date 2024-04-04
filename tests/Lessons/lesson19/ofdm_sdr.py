@@ -142,7 +142,7 @@ def Classen_Freq(rx_sig,  Nfft, pilot, index_pilot):
     index_pilot = index_pilot[1:]
     
     
-    for i in range(-3,3):
+    for i in range(-20,20):
 
         y_e = rx_sig[index_pilot]
         for j in range(len(y_e)//2):
@@ -159,7 +159,7 @@ def Classen_Freq(rx_sig,  Nfft, pilot, index_pilot):
     for i in range(len(rx_sig)//(Nfft)):
         n_new = 0 
         for n in range(i*(Nfft),(i+1) * (Nfft)):
-            rx_sig[n] = rx_sig[n] * np.exp(-1j * 2 * np.pi * 0.1711/Nfft * n_new)
+            rx_sig[n] = rx_sig[n] * np.exp(-1j * 2 * np.pi * max_eps/Nfft * n_new)
             n_new += 1 
             #print(n)
         n_new = 0 
@@ -404,7 +404,7 @@ def OFDM_DEMODULATOR(rx_sig, num_carrier, cp, len_pack, add_pilot, pss, step_pil
     pilot_carrier = np.arange(0,len(add_pilot),step_pilot) # for del pilot
     
     rx_sig_de = delete_CP(rx_ofdm,num_carrier,cp)
-    #rx_sig_de = Classen_Freq(rx_sig_de, num_carrier,pilot, pilot_carrier)
+    rx_sig_de = Classen_Freq(rx_sig_de, num_carrier,pilot, pilot_carrier)
 
     #rx_sig_de = PLL(rx_sig_de)
     #rx_sig_de = FLL(rx_sig_de)
@@ -413,7 +413,7 @@ def OFDM_DEMODULATOR(rx_sig, num_carrier, cp, len_pack, add_pilot, pss, step_pil
     
     rx_sig_de_pilot = rx_sig_de_pilot[abs(rx_sig_de_pilot) >= 1.00]
     
-    plt.figure(1)
+    
     plot_QAM(rx_sig_de_pilot, "Befor Interpolation")
 
     #only_pilot = rx_sig_de[pilot_carrier]
@@ -436,7 +436,7 @@ def OFDM_DEMODULATOR(rx_sig, num_carrier, cp, len_pack, add_pilot, pss, step_pil
     #ic(rx_sig_de)
     #rx_sig_de = PLL(rx_sig_de)
     
-    plt.figure(9)
+    
 
     plot_QAM(rx_sig_de, "After Interpolation")
 
@@ -457,7 +457,7 @@ def OFDM_DEMODULATOR(rx_sig, num_carrier, cp, len_pack, add_pilot, pss, step_pil
 
 
 sdr = standart_settings("ip:192.168.2.1", 1e6, 1e3)
-#sdr2 = standart_settings("ip:192.168.3.1", 1e6, 1e3)
+sdr2 = standart_settings("ip:192.168.3.1", 1e6, 1e3)
 
 
 num_carrier = 64
@@ -497,7 +497,7 @@ len_pack = len(ofdm_symbols)
 
 
 tx_signal(sdr,1900e6,0,ofdm_symbols)
-rx_sig = rx_signal(sdr,1900e6,20,3)
+rx_sig = rx_signal(sdr2,1900e6,20,3)
 
 rxMax = max(rx_sig.real)
 rx_sig = rx_sig / rxMax
