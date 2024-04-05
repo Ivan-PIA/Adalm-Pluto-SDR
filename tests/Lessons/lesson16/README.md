@@ -10,7 +10,7 @@
 
 1. Сформированный сигнал QPSK ([ссылка на модуль](/src/modular.py)) и зашумили его
 
-<img src = "photo\qpsk_noise.png">
+<img src = "photo\1.png">
 
 2. Пропустили через фильтр, а именно сделали свертку
 
@@ -26,7 +26,7 @@
 
     - результат
 
-<img src = "photo\qpsk_with_noise.png">
+<img src = "photo\5.png">
 
 Видим что разброс стал намного меньше
 
