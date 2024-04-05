@@ -8,13 +8,14 @@ bit = text_to_bits('kadsbkabfjakhcbajdcjkhkdkjnjsdnnb cdjk')
 
 qpsk = QPSK(bit)
 nc = len(qpsk)
-noise = np.random.normal(0,600,len(qpsk)) + 1j * np.random.normal(0,600,len(qpsk))
-qpsk += noise
+noise = np.random.normal(0,100,len(qpsk)) + 1j * np.random.normal(0,100,len(qpsk))
+
 
 plot_QAM(qpsk, title= "qpsk" )
 plt.figure(2)
 plt.title("ifft")
 ofdm = ifft(qpsk,nc)
+ofdm += noise
 plt.plot(ofdm)
 noise = np.random.normal(0,1,len(ofdm))
 ofdm = ofdm + noise
