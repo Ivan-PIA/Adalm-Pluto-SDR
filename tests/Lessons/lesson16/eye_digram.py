@@ -54,10 +54,10 @@ h1 = np.ones(10)
 
 QPSK = QPSK(bit)
 QPSK = np.repeat(QPSK, 10)
-noise = np.random.normal(0,0.05,len(QPSK))
-QPSK = QPSK + noise
+noise = np.random.normal(0,200,len(QPSK)) + 1j * np.random.normal(0,200,len(QPSK))
+qpsk = QPSK + noise
 
-conv = np.convolve(h1,QPSK,'full')
+conv = np.convolve(h1,qpsk,'full')
 
 
 #conv= conv+
@@ -78,7 +78,7 @@ def gard_ted(conv1):
 
 
 plt.figure(1)
-plt.scatter(QPSK.real, QPSK.imag)
+plt.scatter(qpsk.real, qpsk.imag)
 
 plt.figure(2)
 eye_diagram(conv)
@@ -88,12 +88,13 @@ plt.plot(conv.real)
 
 #plt.figure(4)
 conv1 = On_eye_dig(conv,9)
-#plt.scatter(conv.real, conv.imag)
+plt.figure(5)
+plt.scatter(conv1.real, conv1.imag)
 
 
 output_signal = PLL(conv)
-plt.figure(5)
-plt.scatter(output_signal.real,output_signal.imag)
+#plt.figure(5)
+#plt.scatter(output_signal.real,output_signal.imag)
 
 
 #plt.figure(6)
