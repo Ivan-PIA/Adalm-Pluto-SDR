@@ -1,23 +1,32 @@
-from context import QPSK, text_to_bits
+from context import *
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.fftpack import fft, ifft,  fftshift, ifftshift
 
 bit = text_to_bits('kadsbkabfjakhcbajdcjkhkdkjnjsdnnb cdjk')
 
-nc = 16
+
 qpsk = QPSK(bit)
-plt.figure(1)
-plt.scatter(qpsk.real,qpsk.imag)
+nc = len(qpsk)
+noise = np.random.normal(0,600,len(qpsk)) + 1j * np.random.normal(0,600,len(qpsk))
+qpsk += noise
+
+plot_QAM(qpsk, title= "qpsk" )
 plt.figure(2)
-ofdm = ifft(qpsk,16)
+plt.title("ifft")
+ofdm = ifft(qpsk,nc)
 plt.plot(ofdm)
 noise = np.random.normal(0,1,len(ofdm))
 ofdm = ofdm + noise
 
 print(ofdm)
 
-deqpsk = fft(ofdm,16)
-plt.figure(3)
-plt.scatter(deqpsk.real,deqpsk.imag)
+deqpsk = fft(ofdm,nc)
+
+plot_QAM(deqpsk, title= "qpsk" )
+
+deqpsk = DeQPSK(deqpsk)
+
+text = bits_array_to_text(deqpsk)
+print(text)
 plt.show()
