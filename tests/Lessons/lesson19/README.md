@@ -17,16 +17,6 @@ def gen_ofdm_symbols(qpsk1,num_carrier,cp):
     return ofdm_symbols
 ```
 
-2. Защитный префикс
+- Защитный интервал. 
 
 <img src = "photo/cp.png">
-
-
-- Прием без SDR. По циклическиму префиксу.
-
-<img src = "photo/photo_2024-03-03_23-53-08.jpg">
-
-
-- Прием с SDR. По циклическиму префиксу.
-
-<img src = "photo/ofdm.jpg">
