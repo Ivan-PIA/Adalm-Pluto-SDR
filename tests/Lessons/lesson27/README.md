@@ -32,11 +32,14 @@
 - Декодируем остальные слоты. 
 - для каждого слота вичляем EVM
 
- 
+ <p align="left">
 <img src = "photo/1.jpg"> 
 <img src = "photo/2.jpg">
+</p>
+ <p align="left">
 <img src = "photo/3.jpg">
 <img src = "photo/4.jpg">
+</p>
 <img src = "photo/5.jpg">
 
 7. Приняли файл rx.py. Запустили, убедились в правильности.
