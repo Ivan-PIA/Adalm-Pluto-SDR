@@ -36,20 +36,20 @@ data3 = data33(:, 33:end);
 ofdm = fft(data3.');
 %ofdm2 = fft(data2.');
 
-%scatt = [ofdm(2, :), ofdm(3, :),ofdm(8, :),ofdm(9, :),ofdm(14, :),ofdm(15, :)]
+scatt = [ofdm(2, :), ofdm(3, :),ofdm(8, :),ofdm(9, :),ofdm(14, :),ofdm(15, :)]
 %scatterplot(scatt)
-figure;
-plot(abs(ofdm));
+
 
 %figure;
-%imagesc(abs(d0));
+%imagesc(abs(ofdm));
 
 %ofdm1 = [ofdm(65:128,:);ofdm(1:64,:)];
 %plot(abs(ofdm));
-
+ofdm2 = [ofdm(65:128,:);ofdm(1:64,:)];
 figure;
-imagesc(abs(ofdm));
-
+imagesc(abs(ofdm2));
+figure;
+plot(abs(ofdm2));
 
 corr_pss=filter(flip(conj(pss)),1,data);
 %figure;
@@ -91,14 +91,14 @@ ofdm = fft(data3.');
 
 scatt = [ofdm(2, :), ofdm(3, :),ofdm(8, :),ofdm(9, :),ofdm(14, :),ofdm(15, :)];
 scatterplot(scatt);
-figure;
-plot(abs(ofdm));
+
 
 %figure;
 %imagesc(abs(d0));
 
 ofdm2 = [ofdm(65:128,:);ofdm(1:64,:)];
 %plot(abs(ofdm));
-
+figure;
+plot(abs(ofdm2));
 figure;
 imagesc(abs(ofdm2));
