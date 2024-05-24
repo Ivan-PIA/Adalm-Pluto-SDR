@@ -26,8 +26,8 @@ def BPSK(bit_mass):
 	sample = sample * ampl
 	return sample
 
-def QPSK(bit_mass):
-	ampl = 2**14
+def QPSK(bit_mass, amplitude = 1):
+	
 	if (len(bit_mass) % 2 != 0):
 		print("QPSK:\nError, check bit_mass length", len(bit_mass))
 		raise "error"
@@ -40,7 +40,7 @@ def QPSK(bit_mass):
 			imag = (1 - 2 * b2i1) / np.sqrt(2)
 			sample.append(complex(real, imag))
 		sample = np.asarray(sample)
-		sample = sample * ampl
+		sample = sample * amplitude
 		return sample
 
 def QAM16(bit_mass):
